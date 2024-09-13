@@ -38,11 +38,22 @@ function copyHtml() {
         top: 0px;
         left: 0px;
         overflow: hidden;
+     overflow: auto;
+        text-align: center;
+      }
+      #content {
+        display: inline-block;
+        width: 800px;
+        margin: 0 auto;
+        padding: 20px 0;
+        text-align: left;
       }
     </style>
   </head>
-  <body> 
+  <body>
+  <div id="content"> 
   ${list.join('')}
+  </div>
   </body>
 </html>`
   );
