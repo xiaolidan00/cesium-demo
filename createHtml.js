@@ -1,11 +1,11 @@
 import fs from 'fs';
+import urls from './urls.js';
 
 function copyHtml() {
-  const PAGE_PATH = './src'; //指定要查询的目录
-  const entryFiles = fs.readdirSync(PAGE_PATH); //获取到指定目录下的所有文件名
   const indexPage = 'dist/index.html';
   const list = [];
-  entryFiles.forEach((filePath) => {
+  urls.urls.forEach((item, idx) => {
+    const filePath = item.name;
     const data = fs.readFileSync(`src/${filePath}/index.html`);
     const newPath = `dist/${filePath}/index.html`;
     const newData = data
@@ -13,7 +13,11 @@ function copyHtml() {
       .replace('index.ts', 'index.js')
       .replace('<%- title %>', filePath);
     fs.writeFileSync(newPath, newData);
-    list.push(`<h1><a href="${filePath}/index.html">${filePath}</a></h1>`);
+    list.push(
+      `<h1>${idx + 1}.${
+        item.title
+      }</h1><p>访问地址：<a href="${filePath}/index.html">${filePath}/index.html</a></p>`
+    );
   });
 
   fs.writeFileSync(
@@ -37,8 +41,7 @@ function copyHtml() {
       }
     </style>
   </head>
-  <body>
-    <div id="cesiumContainer"></div>
+  <body> 
   ${list.join('')}
   </body>
 </html>`
