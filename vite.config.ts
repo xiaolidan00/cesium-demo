@@ -35,9 +35,17 @@ import urls from './urls';
 
 export default defineConfig(({ mode }) => {
   console.log(mode);
+  const plugins = [];
+  // if (mode === 'development') {
+  plugins.push(
+    // createHtmlPlugin({
+    //   pages: urls.pages
+    // }),
+    cesium()
+  );
+  // }
   return {
     plugins: [
-      cesium()
       // createExternal({
       //   development: {
       //     externals: {
@@ -45,9 +53,8 @@ export default defineConfig(({ mode }) => {
       //     }
       //   }
       // }),
-      // createHtmlPlugin({
-      //   pages: urls.pages
-      // })
+
+      ...plugins
     ],
     build: {
       minify: false,
