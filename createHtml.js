@@ -11,6 +11,7 @@ function copyHtml() {
     const newData = data
       .toString()
       .replace('index.ts', 'index.js')
+      .replaceAll('/node_modules/', '/cesium-demo/')
       .replace('<%- title %>', filePath);
     fs.writeFileSync(newPath, newData);
     list.push(

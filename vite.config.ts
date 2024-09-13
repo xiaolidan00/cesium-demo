@@ -6,7 +6,6 @@ import urls from './urls';
 
 // import fs from 'fs';
 
-
 // import { resolve } from 'node:path';
 
 // import createExternal from 'vite-plugin-external';
@@ -34,30 +33,33 @@ import urls from './urls';
 // }
 // const pages = getEntryPath();
 
-export default defineConfig({
-  plugins: [
-    cesium()
-    // createExternal({
-    //   development: {
-    //     externals: {
-    //       cesium: 'Cesium'
-    //     }
-    //   }
-    // }),
-    // createHtmlPlugin({
-    //   pages: urls.pages
-    // })
-  ],
-  build: {
-    minify: false,
+export default defineConfig(({ mode }) => {
+  console.log(mode);
+  return {
+    plugins: [
+      cesium()
+      // createExternal({
+      //   development: {
+      //     externals: {
+      //       cesium: 'Cesium'
+      //     }
+      //   }
+      // }),
+      // createHtmlPlugin({
+      //   pages: urls.pages
+      // })
+    ],
+    build: {
+      minify: false,
 
-    rollupOptions: {
-      external: ['cesium'],
+      rollupOptions: {
+        external: ['cesium'],
 
-      input: urls.map,
-      output: {
-        entryFileNames: '[name]/index.js'
+        input: urls.map,
+        output: {
+          entryFileNames: '[name]/index.js'
+        }
       }
     }
-  }
+  };
 });
