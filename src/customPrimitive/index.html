@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%- title %></title>
     <script src="/node_modules/cesium/Build/Cesium/Cesium.js"></script>
-    <link href="../../node_modules/cesium/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+    <link
+      href="../../node_modules/cesium/Build/Cesium/Widgets/widgets.css"
+      rel="stylesheet"
+    />
     <style>
       body,
       #cesiumContainer {
@@ -18,10 +21,37 @@
         left: 0px;
         overflow: hidden;
       }
+      .tool {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 8;
+      }
+      .button {
+        background-color: dodgerblue;
+        border: none;
+        height: 32px;
+        font-size: 14px;
+        color: white;
+        border-radius: 4px;
+        padding: 0 8px;
+      }
+      .button + .button {
+        margin-right: 10px;
+      }
+      .button:hover {
+        filter: brightness(150%);
+      }
     </style>
   </head>
   <body>
     <div id="cesiumContainer"></div>
+    <div class="tool">
+      <button class="button" id="btn1">Primitive改变形状</button>
+      <button class="button" id="btn4">删除Primitive</button>
+      <button class="button" id="btn2">添加地形</button>
+      <button class="button" id="btn3">关闭地形</button>
+    </div>
     <script src="index.ts" type="module"></script>
   </body>
 </html>

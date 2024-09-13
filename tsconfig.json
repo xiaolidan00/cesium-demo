@@ -13,10 +13,11 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "declaration": true,
+     
     "jsx": "preserve",
     "lib": ["ESNext", "DOM"]
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "getPage.js"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "getPage.js","type.d.ts"],
   "exclude": ["src/**/*.stories.ts", "src/examples/", "src/**/*.test.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
