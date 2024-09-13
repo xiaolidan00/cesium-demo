@@ -1,8 +1,11 @@
 import cesium from 'vite-plugin-cesium';
-import { createHtmlPlugin } from 'vite-plugin-html';
 import { defineConfig } from 'vite';
-import fs from 'fs';
 import urls from './urls';
+
+// import { createHtmlPlugin } from 'vite-plugin-html';
+
+// import fs from 'fs';
+
 
 // import { resolve } from 'node:path';
 
@@ -30,42 +33,10 @@ import urls from './urls';
 //   return { inputmap: map, pages: p };
 // }
 // const pages = getEntryPath();
-fs.writeFileSync(
-  './index.html',
-  `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cesium-Demo</title>
-  <style>
-    body {
-      margin: 0px;
-      padding: 0px;
-      position: absolute;
-      height: 100%;
-      width: 100%;
-      top: 0px;
-      left: 0px;
-      overflow: hidden;
-    }
-  </style>
-</head>
-<body> 
-${urls.urls
-  .map(
-    (item, idx) =>
-      `<h1>${idx + 1}.${item.title}</h1><p>访问地址：<a href="src/${item.name}/index.html">src/${
-        item.name
-      }/index.html</a></p>`
-  )
-  .join('')}
-</body>
-</html>`
-);
+
 export default defineConfig({
   plugins: [
-    cesium(),
+    cesium()
     // createExternal({
     //   development: {
     //     externals: {
@@ -73,14 +44,16 @@ export default defineConfig({
     //     }
     //   }
     // }),
-    createHtmlPlugin({
-      pages: urls.pages
-    })
+    // createHtmlPlugin({
+    //   pages: urls.pages
+    // })
   ],
   build: {
     minify: false,
+
     rollupOptions: {
       external: ['cesium'],
+
       input: urls.map,
       output: {
         entryFileNames: '[name]/index.js'
