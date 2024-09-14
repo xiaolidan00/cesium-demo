@@ -9,6 +9,8 @@ export type CustomLinePrimitiveOption = {
   width: number;
   isGround?: boolean;
   isHeight?: boolean;
+  isDashed?: boolean;
+  dashLength?: number;
 };
 
 class CustomLinePrimitive {
@@ -20,6 +22,8 @@ class CustomLinePrimitive {
   _color: Cesium.Color = Cesium.Color.RED;
   width: number;
   isGround?: boolean;
+  isDashed?: boolean;
+  dashLength?: number;
   private _isGround?: boolean = false;
   isHeight?: boolean = false;
   private _isHeight?: boolean = false;
@@ -29,10 +33,25 @@ class CustomLinePrimitive {
     this.width = options.width || 3;
     this.color = options.color;
     this.isGround = options.isGround;
+    this.isDashed = options.isDashed;
+    this.dashLength = options.dashLength || 20;
     if (this.isGround) {
       this.isHeight = false;
     } else {
       this.isHeight = options.isHeight || false;
+    }
+  }
+  getMaterial() {
+    if (this.isDashed) {
+      return Cesium.Material.fromType("PolylineDash", {
+        color: this.color,
+        gapColor: Cesium.Color.TRANSPARENT,
+        dashLength: this.dashLength,
+      });
+    } else {
+      return Cesium.Material.fromType("Color", {
+        color: this.color,
+      });
     }
   }
   getGeometry() {
@@ -66,9 +85,7 @@ class CustomLinePrimitive {
         }),
         appearance: new Cesium.PolylineMaterialAppearance({
           translucent: this.color.alpha !== 1,
-          material: Cesium.Material.fromType("Color", {
-            color: this.color,
-          }),
+          material: this.getMaterial(),
         }),
         asynchronous: false,
       });
@@ -80,9 +97,7 @@ class CustomLinePrimitive {
         }),
         appearance: new Cesium.PolylineMaterialAppearance({
           translucent: this.color.alpha !== 1,
-          material: Cesium.Material.fromType("Color", {
-            color: this.color,
-          }),
+          material: this.getMaterial(),
         }),
         asynchronous: false,
       });
