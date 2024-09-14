@@ -3,9 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>Cesium-Demo</title>
-
     <style>
       body {
         margin: 0px;
@@ -15,12 +13,33 @@
         width: 100%;
         top: 0px;
         left: 0px;
-        overflow: hidden;
+        overflow: auto;
+        text-align: center;
+      }
+      #content {
+        display: inline-block;
+        width: 800px;
+        margin: 0 auto;
+        padding: 20px 0;
+        text-align: left;
       }
     </style>
   </head>
   <body>
-    <div id="cesiumContainer"></div>
-    Cesium-Demo
+    <div id="content"></div>
+    <script type="module">
+      import urls from './urls.js';
+      console.log(urls);
+
+      const content = urls.urls
+        .map(
+          (item, idx) =>
+            `<h1>${idx + 1}.${item.title}</h1><p>访问地址：<a href="src/${
+              item.name
+            }/index.html">src/${item.name}/index.html</a></p>`
+        )
+        .join('');
+      document.getElementById('content').innerHTML = content;
+    </script>
   </body>
 </html>
