@@ -5,6 +5,7 @@ export type LngLatHeightType = [number, number, number];
 const EARTH_RADIUS = 6378137;
 export class PosUtil {
   static viewer: Cesium.Viewer;
+  static terrainProvider: Cesium.CesiumTerrainProvider;
   static posNoHeightTransform(positions: number[][]): number[][] {
     return positions.map((it) => [it[0], it[1]]);
   }
@@ -14,7 +15,9 @@ export class PosUtil {
   static Cartesian3ToCartographic(c: Cesium.Cartesian3) {
     return Cesium.Cartographic.fromCartesian(c);
   }
-
+  static CartographicToCartesian3(c: Cesium.Cartographic) {
+    return Cesium.Cartesian3.fromRadians(c.longitude, c.latitude, c.height);
+  }
   static CartographicToWGS84(c: Cesium.Cartographic): LngLatHeightType {
     return [
       Cesium.Math.toDegrees(c.longitude),
@@ -50,14 +53,28 @@ export class PosUtil {
       return this.Cartesian3ToWGS84(cartesian);
     }
   }
+  static picPoskModelHeight(c: Cesium.Cartographic) {
+    return new Promise<number>((resolve) => {
+      this.viewer.scene
+        .clampToHeightMostDetailed([this.CartographicToCartesian3(c)])
+        .then((pos: Cesium.Cartesian3[]) => {
+          if (pos?.length) {
+            const cc = this.Cartesian3ToCartographic(pos[0]);
+            resolve(cc.height);
+          } else {
+            resolve(0);
+          }
+        });
+    });
+  }
   static pickPosHeight(c: Cesium.Cartographic) {
     if (this.viewer.scene.sampleHeightSupported) {
       return this.viewer.scene.sampleHeight(c);
     }
   }
   static pickPosTerrainHeight(c: Cesium.Cartographic) {
-    return new Promise((resolve) => {
-      Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider, [
+    return new Promise<number>((resolve) => {
+      Cesium.sampleTerrainMostDetailed(this.terrainProvider, [
         new Cesium.Cartographic(c.longitude, c.latitude),
       ]).then((pos: Cesium.Cartographic[]) => {
         if (pos?.length) {
@@ -108,9 +125,9 @@ export class PosUtil {
     //   }
     // }
   }
-  static pickTerrainPos(c: Cesium.Cartesian2) {
-    let cartesian;
-    if (this.viewer.terrainProvider instanceof Cesium.TerrainProvider) {
+  static pickPos2D3D(c: Cesium.Cartesian2) {
+    if (this.viewer.scene.mode === Cesium.SceneMode.SCENE2D) {
+      let cartesian;
       const ray = this.viewer.camera.getPickRay(c);
       if (ray) {
         cartesian = this.viewer.scene.globe.pick(ray, this.viewer.scene);
@@ -118,7 +135,21 @@ export class PosUtil {
           return cartesian;
         }
       }
+    } else {
+      return this.pickPos(c);
     }
+  }
+  static pickTerrainPos(c: Cesium.Cartesian2) {
+    let cartesian;
+
+    const ray = this.viewer.camera.getPickRay(c);
+    if (ray) {
+      cartesian = this.viewer.scene.globe.pick(ray, this.viewer.scene);
+      if (Cesium.defined(cartesian)) {
+        return cartesian;
+      }
+    }
+
     cartesian = this.viewer.scene.camera.pickEllipsoid(
       c,
       this.viewer.scene.globe.ellipsoid

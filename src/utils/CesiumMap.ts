@@ -56,7 +56,7 @@ export class CesiumMap {
     });
     //Cesium的logo
     (viewer.cesiumWidget.creditContainer as HTMLElement).style.display = "none";
-    viewer.scene.globe.depthTestAgainstTerrain = true; //地面以下不可见（高程遮挡） 会导致图标被地面覆盖问题
+    // viewer.scene.globe.depthTestAgainstTerrain = true; //地面以下不可见（高程遮挡） 会导致图标被地面覆盖问题
     viewer.scene.globe.translucency.enabled = true;
 
     viewer.scene.postProcessStages.fxaa.enabled = true;

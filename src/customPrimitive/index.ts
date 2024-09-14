@@ -10,30 +10,31 @@ class MyCesiumMap extends CesiumMap {
   terrainChangeEvent = "terrainChangeEvent";
   constructor(containerId: string) {
     super(containerId);
-    this.setView(
-      {
-        lng: 112.99793630124755,
-        lat: 38.993141215272466,
-        height: 595.3241643506092,
-      },
-      {
-        heading: 0,
-        pitch: -30,
-        roll: 360,
-      }
-    );
     // this.setView(
     //   {
-    //     lng: 113.69245554433121,
-    //     lat: 23.164224093748036,
-    //     height: 100,
+    //     lng: 112.99793630124755,
+    //     lat: 38.993141215272466,
+    //     height: 595.3241643506092,
     //   },
     //   {
     //     heading: 0,
-    //     pitch: -50,
+    //     pitch: -30,
     //     roll: 360,
     //   }
     // );
+
+    this.setView(
+      {
+        lng: 114.12139292195221,
+        lat: 23.494146019762045,
+        height: 400,
+      },
+      {
+        heading: 0,
+        pitch: -50,
+        roll: 360,
+      }
+    );
   }
   async init() {
     const terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(
@@ -49,30 +50,27 @@ class MyCesiumMap extends CesiumMap {
     });
 
     DynamicPrimitive.viewer = this.viewer;
-    const polygon = DynamicPrimitive.addPolygon({
-      id: "aaa",
-      positions: [
-        [113, 39],
-        [113.002, 39],
-        [113.002, 39.002],
-      ],
-      color: Cesium.Color.YELLOW.withAlpha(0.5),
-      outline: true,
-      outlineColor: Cesium.Color.YELLOW,
-      outlineWidth: 3,
-      isGround: true,
-    });
+    // const polygon = DynamicPrimitive.addPolygon({
+    //   id: "aaa",
+    //   positions: [
+    //     [113, 39],
+    //     [113.002, 39],
+    //     [113.002, 39.002],
+    //   ],
+    //   color: Cesium.Color.YELLOW.withAlpha(0.5),
+    //   outline: true,
+    //   outlineColor: Cesium.Color.YELLOW,
+    //   outlineWidth: 3,
+    //   isGround: true,
+    //   isPoint: true,
+    // });
 
     // const polygon = DynamicPrimitive.addPolygon({
     //   id: "aaa",
     //   positions: [
-    //     [113.69245554433121, 23.164224093748036, -0.005276706939177416],
-    //     [113.69034235029376, 23.16172482687673, -0.008379322114169113],
-    //     [113.6960317340238, 23.159449084501517, -0.0021148479059751326],
-    //     [113.69847003483359, 23.162334416984866, -0.006557055925513616],
-    //     [113.69727119532554, 23.16582931975918, -0.0017425456673988776],
-    //     [113.69487352582445, 23.16717038383892, -0.001627863522539245],
-    //     [113.69123638653335, 23.167170377712363, -0.006128266901260755],
+    //     [114.12139292195221, 23.494146019762045, 244.94998754302043],
+    //     [114.0781432964593, 23.457089645698883, 83.74397088283233],
+    //     [114.02284024948034, 23.50605266019647, 322.2697819772894],
     //   ],
     //   color: Cesium.Color.YELLOW.withAlpha(0.5),
     //   outline: true,
@@ -81,43 +79,51 @@ class MyCesiumMap extends CesiumMap {
     //   isGround: true,
     // });
 
+    // const line = DynamicPrimitive.addPolyline({
+    //   id: "bbb",
+    //   positions: [
+    //     [113.004, 39],
+    //     [113.006, 39],
+    //     [113.006, 39.002],
+    //   ],
+    //   color: Cesium.Color.BLUE.withAlpha(0.5),
+    //   width: 5,
+    //   isGround: true,
+    //   isPoint: true,
+    // });
+
     const line = DynamicPrimitive.addPolyline({
       id: "bbb",
       positions: [
-        [113.004, 39],
-        [113.006, 39],
-        [113.006, 39.002],
+        [114.12139292195221, 23.494146019762045, 244.94998754302043],
+        [114.0781432964593, 23.457089645698883, 83.74397088283233],
+        [114.02284024948034, 23.50605266019647, 322.2697819772894],
       ],
       color: Cesium.Color.BLUE.withAlpha(0.5),
       width: 5,
       isGround: true,
+      isPoint: true,
     });
-    console.log(polygon, line);
 
-    const btn1 = document.getElementById("btn1");
-    if (btn1) {
-      btn1.onclick = () => {
-        DynamicPrimitive.updatePolygonPos("aaa", [
-          [113, 39],
-          [113.002, 39],
-          [113.002, 39.002],
-          [113.003, 39.002],
-        ]);
-        DynamicPrimitive.updatePolylinePos("bbb", [
-          [113.004, 39],
-          [113.006, 39],
-        ]);
-      };
-    }
-    const btn2 = document.getElementById("btn2");
-    if (btn2) {
-      btn2.onclick = async () => {
-        this.viewer.terrainProvider = terrainProvider;
+    this.addBtnAction("btn1", () => {
+      DynamicPrimitive.updatePolygonPos("aaa", [
+        [113, 39, 100],
+        [113.002, 39, 100],
+        [113.002, 39.002, 100],
+        [113.003, 39.002, 100],
+      ]);
+      DynamicPrimitive.updatePolylinePos("bbb", [
+        [113.004, 39, 100],
+        [113.006, 39, 100],
+      ]);
+    });
+    this.addBtnAction("btn2", () => {
+      this.viewer.terrainProvider = terrainProvider;
 
-        this.isTerrain = true;
-        EventBus.emit(this.terrainChangeEvent, this.isTerrain);
-      };
-    }
+      this.isTerrain = true;
+      EventBus.emit(this.terrainChangeEvent, this.isTerrain);
+    });
+
     this.addBtnAction("btn3", () => {
       this.viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider();
 
@@ -129,7 +135,9 @@ class MyCesiumMap extends CesiumMap {
       DynamicPrimitive.removePolygon("aaa");
       DynamicPrimitive.removePolyline("bbb");
     });
-    useEventBus(this.terrainChangeEvent, (isTerrain: boolean) => {});
+    useEventBus(this.terrainChangeEvent, (isTerrain: boolean) => {
+      DynamicPrimitive.updateTerrain();
+    });
   }
   addBtnAction(id: string, callback: Function) {
     const btn = document.getElementById(id);

@@ -13,7 +13,12 @@ export class DynamicPrimitive {
   static lines = new Map<string, CustomLinePrimitive>();
   static polygons = new Map<string, CustomPolygonPrimitive>();
   static addPolygon(set: CustomPolygonPrimitiveOption) {
-    let p = new CustomPolygonPrimitive(set);
+    let p = new CustomPolygonPrimitive({
+      ...set,
+      isTerrain:
+        this.viewer.scene.mode == Cesium.SceneMode.SCENE3D &&
+        this.viewer.terrainProvider instanceof Cesium.CesiumTerrainProvider,
+    });
     this.viewer.scene.primitives.add(p);
     this.polygons.set(set.id, p);
     return p;
@@ -26,7 +31,12 @@ export class DynamicPrimitive {
   }
 
   static addPolyline(set: CustomLinePrimitiveOption) {
-    let line = new CustomLinePrimitive(set);
+    let line = new CustomLinePrimitive({
+      ...set,
+      isTerrain:
+        this.viewer.scene.mode == Cesium.SceneMode.SCENE3D &&
+        this.viewer.terrainProvider instanceof Cesium.CesiumTerrainProvider,
+    });
 
     this.viewer.scene.primitives.add(line);
 
@@ -55,5 +65,24 @@ export class DynamicPrimitive {
       p.destroy();
     }
     this.polygons.delete(id);
+  }
+  static updateTerrain() {
+    const isTerrain =
+      this.viewer.scene.mode == Cesium.SceneMode.SCENE3D &&
+      this.viewer.terrainProvider instanceof Cesium.CesiumTerrainProvider;
+
+    this.lines.forEach((line) => {
+      line.isTerrain = isTerrain;
+    });
+
+    this.polygons.forEach((polygon) => {
+      polygon.isTerrain = isTerrain;
+    });
+  }
+  static getLine(id: string) {
+    return this.lines.get(id);
+  }
+  static getPolygon(id: string) {
+    return this.polygons.get(id);
   }
 }
