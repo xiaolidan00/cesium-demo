@@ -1,5 +1,9 @@
 const urls = [
   {
+    title: '绘制点线面',
+    name: 'draw'
+  },
+  {
     title: '自定义Primitive',
     name: 'customPrimitive'
   },

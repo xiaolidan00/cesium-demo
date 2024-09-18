@@ -1,6 +1,6 @@
-import * as Cesium from "cesium";
+import * as Cesium from 'cesium';
 
-import { PosUtil } from "./PosUtil";
+import { PosUtil } from './PosUtil';
 
 export type PosType = {
   lng: number;
@@ -15,6 +15,7 @@ export type OrientType = {
 export class CesiumMap {
   viewer: Cesium.Viewer;
   isFirst: boolean = true;
+
   constructor(containerId: string) {
     //暗色底图
     // const nightLayer=new Cesium.ImageryLayer.fromProviderAsync(
@@ -24,9 +25,9 @@ export class CesiumMap {
     //   Cesium.IonImageryProvider.fromAssetId(3845)
     // );
     const imageryProvider = new Cesium.UrlTemplateImageryProvider({
-      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-      subdomains: ["0", "1", "2", "3"],
-      tilingScheme: new Cesium.WebMercatorTilingScheme(),
+      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      subdomains: ['0', '1', '2', '3'],
+      tilingScheme: new Cesium.WebMercatorTilingScheme()
     });
 
     const viewer = new Cesium.Viewer(containerId, {
@@ -52,10 +53,10 @@ export class CesiumMap {
       //   }),
       //阴影
       shadows: true,
-      baseLayer: new Cesium.ImageryLayer(imageryProvider),
+      baseLayer: new Cesium.ImageryLayer(imageryProvider)
     });
     //Cesium的logo
-    (viewer.cesiumWidget.creditContainer as HTMLElement).style.display = "none";
+    (viewer.cesiumWidget.creditContainer as HTMLElement).style.display = 'none';
     // viewer.scene.globe.depthTestAgainstTerrain = true; //地面以下不可见（高程遮挡） 会导致图标被地面覆盖问题
     viewer.scene.globe.translucency.enabled = true;
 
@@ -74,17 +75,17 @@ export class CesiumMap {
       Cesium.CameraEventType.PINCH,
       {
         eventType: Cesium.CameraEventType.LEFT_DRAG,
-        modifier: Cesium.KeyboardEventModifier.CTRL,
+        modifier: Cesium.KeyboardEventModifier.CTRL
       },
       {
         eventType: Cesium.CameraEventType.RIGHT_DRAG,
-        modifier: Cesium.KeyboardEventModifier.CTRL,
+        modifier: Cesium.KeyboardEventModifier.CTRL
       },
-      Cesium.CameraEventType.MIDDLE_DRAG,
+      Cesium.CameraEventType.MIDDLE_DRAG
     ];
     viewer.scene.screenSpaceCameraController.zoomEventTypes = [
       Cesium.CameraEventType.WHEEL,
-      Cesium.CameraEventType.PINCH,
+      Cesium.CameraEventType.PINCH
     ];
 
     this.viewer = viewer;
@@ -94,14 +95,17 @@ export class CesiumMap {
 
     viewer.scene.globe.tileLoadProgressEvent.addEventListener((ev) => {
       if (ev <= 10 && this.isFirst) {
-        console.log("底图加载完毕");
+        console.log('底图加载完毕');
         this.isFirst = false;
         this.init();
       }
     });
   }
   init() {}
-  destroy() {}
+  destroy() {
+    this.viewer.destroy();
+  }
+
   //获取当前视角
   getView() {
     const camera = this.viewer.camera;
@@ -110,12 +114,12 @@ export class CesiumMap {
       {
         lng: Cesium.Math.toDegrees(pos.longitude),
         lat: Cesium.Math.toDegrees(pos.latitude),
-        height: pos.height,
+        height: pos.height
       },
       {
         heading: Math.round(Cesium.Math.toDegrees(camera.heading)),
         pitch: Math.round(Cesium.Math.toDegrees(camera.pitch)),
-        roll: Math.round(Cesium.Math.toDegrees(camera.roll)),
+        roll: Math.round(Cesium.Math.toDegrees(camera.roll))
       }
     );
   }
@@ -125,8 +129,8 @@ export class CesiumMap {
       orientation: {
         heading: Cesium.Math.toRadians(o.heading),
         pitch: Cesium.Math.toRadians(o.pitch),
-        roll: Cesium.Math.toRadians(o.roll),
-      },
+        roll: Cesium.Math.toRadians(o.roll)
+      }
     });
   }
   flyTo(deg: PosType, o: OrientType, duration: number) {
@@ -135,9 +139,9 @@ export class CesiumMap {
       orientation: {
         heading: Cesium.Math.toRadians(o.heading),
         pitch: Cesium.Math.toRadians(o.pitch),
-        roll: Cesium.Math.toRadians(o.roll),
+        roll: Cesium.Math.toRadians(o.roll)
       },
-      duration,
+      duration
     });
   }
 }

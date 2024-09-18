@@ -1,6 +1,6 @@
-import * as Cesium from "cesium";
+import * as Cesium from 'cesium';
 
-import { PosUtil } from "../utils/PosUtil";
+import { PosUtil } from './PosUtil';
 
 export type CustomLinePrimitiveOption = {
   id: string;
@@ -79,14 +79,14 @@ class CustomLinePrimitive {
   }
   getMaterial() {
     if (this.isDashed) {
-      return Cesium.Material.fromType("PolylineDash", {
+      return Cesium.Material.fromType('PolylineDash', {
         color: this.color,
         gapColor: Cesium.Color.TRANSPARENT,
-        dashLength: this.dashLength,
+        dashLength: this.dashLength
       });
     } else {
-      return Cesium.Material.fromType("Color", {
-        color: this.color,
+      return Cesium.Material.fromType('Color', {
+        color: this.color
       });
     }
   }
@@ -96,7 +96,7 @@ class CustomLinePrimitive {
       pixelSize: this.pointSize,
       color: this.pointColor,
       outlineColor: this.pointOutline ? this.pointOutlineColor : undefined,
-      outlineWidth: this.pointOutline ? this.pointOutlineWidth : 0.0,
+      outlineWidth: this.pointOutline ? this.pointOutlineWidth : 0.0
     };
     const baseHeight = 0.0; // this.pointSize * 0.5;
     if (this.isGround) {
@@ -108,14 +108,14 @@ class CustomLinePrimitive {
               it[1],
               it[2] ? it[2] + baseHeight : baseHeight
             ),
-            ...pointStyle,
+            ...pointStyle
           });
         });
       } else {
         this.positions.forEach((it) => {
           points.push({
             position: Cesium.Cartesian3.fromDegrees(it[0], it[1], baseHeight),
-            ...pointStyle,
+            ...pointStyle
           });
         });
       }
@@ -128,14 +128,14 @@ class CustomLinePrimitive {
               it[1],
               it[2] ? it[2] + baseHeight : baseHeight
             ),
-            ...pointStyle,
+            ...pointStyle
           });
         });
       } else {
         this.positions.forEach((it) => {
           points.push({
             position: Cesium.Cartesian3.fromDegrees(it[0], it[1], baseHeight),
-            ...pointStyle,
+            ...pointStyle
           });
         });
       }
@@ -148,7 +148,7 @@ class CustomLinePrimitive {
         positions: Cesium.Cartesian3.fromDegreesArray(
           PosUtil.posNoHeightTransform(this.positions).flat(1)
         ),
-        width: this.width,
+        width: this.width
       });
     } else {
       return new Cesium.PolylineGeometry({
@@ -159,7 +159,7 @@ class CustomLinePrimitive {
           : Cesium.Cartesian3.fromDegreesArray(
               PosUtil.posNoHeightTransform(this.positions).flat(1)
             ),
-        width: this.width,
+        width: this.width
       });
     }
   }
@@ -169,26 +169,26 @@ class CustomLinePrimitive {
     if (this.isGround) {
       return new Cesium.GroundPolylinePrimitive({
         geometryInstances: new Cesium.GeometryInstance({
-          id: this.id + "geometryInstance",
-          geometry: geometry,
+          id: this.id + 'geometryInstance',
+          geometry: geometry
         }),
         appearance: new Cesium.PolylineMaterialAppearance({
           translucent: this.color.alpha !== 1,
-          material: this.getMaterial(),
+          material: this.getMaterial()
         }),
-        asynchronous: false,
+        asynchronous: false
       });
     } else {
       return new Cesium.Primitive({
         geometryInstances: new Cesium.GeometryInstance({
-          id: this.id + "geometryInstance",
-          geometry: geometry,
+          id: this.id + 'geometryInstance',
+          geometry: geometry
         }),
         appearance: new Cesium.PolylineMaterialAppearance({
           translucent: this.color.alpha !== 1,
-          material: this.getMaterial(),
+          material: this.getMaterial()
         }),
-        asynchronous: false,
+        asynchronous: false
       });
     }
   }
@@ -224,9 +224,7 @@ class CustomLinePrimitive {
       });
     }
 
-    this._linePrimitive &&
-      this._primitive &&
-      this._primitive.remove(this._linePrimitive);
+    this._linePrimitive && this._primitive && this._primitive.remove(this._linePrimitive);
     // this._linePrimitive = this._linePrimitive && this._linePrimitive.destroy();
     this._linePrimitive = this.getPrimitive();
 
@@ -234,11 +232,7 @@ class CustomLinePrimitive {
       this._primitive.add(this._linePrimitive);
     }
 
-    if (
-      this.isPoint &&
-      this._pointPrimitive &&
-      !this._primitive.contains(this._pointPrimitive)
-    ) {
+    if (this.isPoint && this._pointPrimitive && !this._primitive.contains(this._pointPrimitive)) {
       this._primitive.add(this._pointPrimitive);
     }
     if (!this._primitive) return;

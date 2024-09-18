@@ -1,11 +1,9 @@
-import * as Cesium from "cesium";
+import * as Cesium from 'cesium';
 
-import CustomLinePrimitive, {
-  type CustomLinePrimitiveOption,
-} from "./CustomLinePrimitive";
+import CustomLinePrimitive, { type CustomLinePrimitiveOption } from '../utils/CustomLinePrimitive';
 import CustomPolygonPrimitive, {
-  type CustomPolygonPrimitiveOption,
-} from "./CustomPolygonPrimitive";
+  type CustomPolygonPrimitiveOption
+} from '../utils/CustomPolygonPrimitive';
 export type ColorArrType = [number, number, number, number];
 
 export class DynamicPrimitive {
@@ -17,7 +15,7 @@ export class DynamicPrimitive {
       ...set,
       isTerrain:
         this.viewer.scene.mode == Cesium.SceneMode.SCENE3D &&
-        this.viewer.terrainProvider instanceof Cesium.CesiumTerrainProvider,
+        this.viewer.terrainProvider instanceof Cesium.CesiumTerrainProvider
     });
     this.viewer.scene.primitives.add(p);
     this.polygons.set(set.id, p);
@@ -35,7 +33,7 @@ export class DynamicPrimitive {
       ...set,
       isTerrain:
         this.viewer.scene.mode == Cesium.SceneMode.SCENE3D &&
-        this.viewer.terrainProvider instanceof Cesium.CesiumTerrainProvider,
+        this.viewer.terrainProvider instanceof Cesium.CesiumTerrainProvider
     });
 
     this.viewer.scene.primitives.add(line);

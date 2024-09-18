@@ -1,6 +1,6 @@
-import * as Cesium from "cesium";
+import * as Cesium from 'cesium';
 
-import { PosUtil } from "../utils/PosUtil";
+import { PosUtil } from './PosUtil';
 
 export type CustomPolygonPrimitiveOption = {
   id: string;
@@ -23,17 +23,10 @@ export type CustomPolygonPrimitiveOption = {
 };
 
 class CustomPolygonPrimitive {
-  private _polygonPrimitive:
-    | Cesium.Primitive
-    | Cesium.GroundPrimitive
-    | undefined = undefined;
+  private _polygonPrimitive: Cesium.Primitive | Cesium.GroundPrimitive | undefined = undefined;
   _primitive: Cesium.PrimitiveCollection | undefined = undefined;
-  private _linePrimitive:
-    | Cesium.Primitive
-    | Cesium.GroundPolylinePrimitive
-    | undefined = undefined;
-  private _pointPrimitive: Cesium.PointPrimitiveCollection | undefined =
-    undefined;
+  private _linePrimitive: Cesium.Primitive | Cesium.GroundPolylinePrimitive | undefined = undefined;
+  private _pointPrimitive: Cesium.PointPrimitiveCollection | undefined = undefined;
   id: string;
   positions: number[][];
   private _positions: number[][] = [];
@@ -84,10 +77,8 @@ class CustomPolygonPrimitive {
     if (this.isGround) {
       return new Cesium.PolygonGeometry({
         polygonHierarchy: new Cesium.PolygonHierarchy(
-          Cesium.Cartesian3.fromDegreesArray(
-            PosUtil.posNoHeightTransform(this.positions).flat(1)
-          )
-        ),
+          Cesium.Cartesian3.fromDegreesArray(PosUtil.posNoHeightTransform(this.positions).flat(1))
+        )
       });
     } else {
       return new Cesium.PolygonGeometry({
@@ -100,7 +91,7 @@ class CustomPolygonPrimitive {
             : Cesium.Cartesian3.fromDegreesArray(
                 PosUtil.posNoHeightTransform(this.positions).flat(1)
               )
-        ),
+        )
       });
     }
   }
@@ -108,29 +99,20 @@ class CustomPolygonPrimitive {
     if (this.isGround) {
       return new Cesium.GroundPolylineGeometry({
         positions: Cesium.Cartesian3.fromDegreesArray(
-          PosUtil.posNoHeightTransform([
-            ...this.positions,
-            this.positions[0],
-          ]).flat(1)
+          PosUtil.posNoHeightTransform([...this.positions, this.positions[0]]).flat(1)
         ),
-        width: this.outlineWidth,
+        width: this.outlineWidth
       });
     } else {
       return new Cesium.PolylineGeometry({
         positions: this.isHeight
           ? Cesium.Cartesian3.fromDegreesArrayHeights(
-              PosUtil.posHeightTransform([
-                ...this.positions,
-                this.positions[0],
-              ]).flat(1)
+              PosUtil.posHeightTransform([...this.positions, this.positions[0]]).flat(1)
             )
           : Cesium.Cartesian3.fromDegreesArray(
-              PosUtil.posNoHeightTransform([
-                ...this.positions,
-                this.positions[0],
-              ]).flat(1)
+              PosUtil.posNoHeightTransform([...this.positions, this.positions[0]]).flat(1)
             ),
-        width: this.outlineWidth,
+        width: this.outlineWidth
       });
     }
   }
@@ -139,30 +121,30 @@ class CustomPolygonPrimitive {
     if (this.isGround) {
       return new Cesium.GroundPolylinePrimitive({
         geometryInstances: new Cesium.GeometryInstance({
-          id: this.id + "linegeometryInstance",
-          geometry: g,
+          id: this.id + 'linegeometryInstance',
+          geometry: g
         }),
         appearance: new Cesium.PolylineMaterialAppearance({
           translucent: this.outlineColor.alpha !== 1,
-          material: Cesium.Material.fromType("Color", {
-            color: this.outlineColor,
-          }),
+          material: Cesium.Material.fromType('Color', {
+            color: this.outlineColor
+          })
         }),
-        asynchronous: false,
+        asynchronous: false
       });
     } else {
       return new Cesium.Primitive({
         geometryInstances: new Cesium.GeometryInstance({
-          id: this.id + "linegeometryInstance",
-          geometry: g,
+          id: this.id + 'linegeometryInstance',
+          geometry: g
         }),
         appearance: new Cesium.PolylineMaterialAppearance({
           translucent: this.outlineColor.alpha !== 1,
-          material: Cesium.Material.fromType("Color", {
-            color: this.outlineColor,
-          }),
+          material: Cesium.Material.fromType('Color', {
+            color: this.outlineColor
+          })
         }),
-        asynchronous: false,
+        asynchronous: false
       });
     }
   }
@@ -172,7 +154,7 @@ class CustomPolygonPrimitive {
       pixelSize: this.pointSize,
       color: this.pointColor,
       outlineColor: this.pointOutline ? this.pointOutlineColor : undefined,
-      outlineWidth: this.pointOutline ? this.pointOutlineWidth : 0.0,
+      outlineWidth: this.pointOutline ? this.pointOutlineWidth : 0.0
     };
     const baseHeight = 0.0; // this.pointSize * 0.5;
     if (this.isGround) {
@@ -184,14 +166,14 @@ class CustomPolygonPrimitive {
               it[1],
               it[2] ? it[2] + baseHeight : baseHeight
             ),
-            ...pointStyle,
+            ...pointStyle
           });
         });
       } else {
         this.positions.forEach((it) => {
           points.push({
             position: Cesium.Cartesian3.fromDegrees(it[0], it[1], baseHeight),
-            ...pointStyle,
+            ...pointStyle
           });
         });
       }
@@ -204,14 +186,14 @@ class CustomPolygonPrimitive {
               it[1],
               it[2] ? it[2] + baseHeight : baseHeight
             ),
-            ...pointStyle,
+            ...pointStyle
           });
         });
       } else {
         this.positions.forEach((it) => {
           points.push({
             position: Cesium.Cartesian3.fromDegrees(it[0], it[1], baseHeight),
-            ...pointStyle,
+            ...pointStyle
           });
         });
       }
@@ -224,32 +206,32 @@ class CustomPolygonPrimitive {
     if (this.isGround) {
       return new Cesium.GroundPrimitive({
         geometryInstances: new Cesium.GeometryInstance({
-          id: this.id + "geometryInstance",
-          geometry: geometries,
+          id: this.id + 'geometryInstance',
+          geometry: geometries
         }),
         appearance: new Cesium.MaterialAppearance({
           faceForward: false,
           translucent: this.color.alpha !== 1,
-          material: Cesium.Material.fromType("Color", {
-            color: this.color,
-          }),
+          material: Cesium.Material.fromType('Color', {
+            color: this.color
+          })
         }),
-        asynchronous: false,
+        asynchronous: false
       });
     } else {
       return new Cesium.Primitive({
         geometryInstances: new Cesium.GeometryInstance({
-          id: this.id + "geometryInstance",
-          geometry: geometries,
+          id: this.id + 'geometryInstance',
+          geometry: geometries
         }),
         appearance: new Cesium.MaterialAppearance({
           faceForward: false,
           translucent: this.color.alpha !== 1,
-          material: Cesium.Material.fromType("Color", {
-            color: this.color,
-          }),
+          material: Cesium.Material.fromType('Color', {
+            color: this.color
+          })
         }),
-        asynchronous: false,
+        asynchronous: false
       });
     }
   }
@@ -273,11 +255,9 @@ class CustomPolygonPrimitive {
     if (!this._primitive) {
       this._primitive = new Cesium.PrimitiveCollection();
     }
-    console.log("%cthis._primitive", "background:yellow", this._primitive);
+    console.log('%cthis._primitive', 'background:yellow', this._primitive);
     if (this.outline) {
-      this._linePrimitive &&
-        this._primitive &&
-        this._primitive.remove(this._linePrimitive);
+      this._linePrimitive && this._primitive && this._primitive.remove(this._linePrimitive);
       // this._linePrimitive = this._linePrimitive && this._linePrimitive.destroy();
       if (this.positions.length >= 2) {
         this._linePrimitive = this.getLinePrimitive();
@@ -295,35 +275,22 @@ class CustomPolygonPrimitive {
       });
     }
 
-    this._polygonPrimitive &&
-      this._primitive &&
-      this._primitive.remove(this._polygonPrimitive);
+    this._polygonPrimitive && this._primitive && this._primitive.remove(this._polygonPrimitive);
     // this._polygonPrimitive =
     //   this._polygonPrimitive && this._polygonPrimitive.destroy();
     if (this.positions.length >= 2) {
       this._polygonPrimitive = this.getPrimitive();
     }
-    if (
-      this._polygonPrimitive &&
-      !this._primitive.contains(this._polygonPrimitive)
-    ) {
+    if (this._polygonPrimitive && !this._primitive.contains(this._polygonPrimitive)) {
       this._primitive.add(this._polygonPrimitive);
     }
 
     //后添加的在上面
-    if (
-      this.outline &&
-      this._linePrimitive &&
-      !this._primitive.contains(this._linePrimitive)
-    ) {
+    if (this.outline && this._linePrimitive && !this._primitive.contains(this._linePrimitive)) {
       this._primitive.add(this._linePrimitive);
     }
 
-    if (
-      this.isPoint &&
-      this._pointPrimitive &&
-      !this._primitive.contains(this._pointPrimitive)
-    ) {
+    if (this.isPoint && this._pointPrimitive && !this._primitive.contains(this._pointPrimitive)) {
       this._primitive.add(this._pointPrimitive);
     }
 
