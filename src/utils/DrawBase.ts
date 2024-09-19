@@ -1,6 +1,6 @@
-import * as Cesium from 'cesium';
+import * as Cesium from "cesium";
 
-import CursorIcon from '../assets/cursor.png';
+import CursorIcon from "../assets/cursor.png";
 
 export default class DrawBase {
   hander: Cesium.ScreenSpaceEventHandler;
@@ -11,9 +11,15 @@ export default class DrawBase {
     this.hander = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
   }
   onListener() {
-    this.hander.setInputAction(this.onLeftClick.bind(this), Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    this.hander.setInputAction(
+      this.onLeftClick.bind(this),
+      Cesium.ScreenSpaceEventType.LEFT_CLICK
+    );
 
-    this.hander.setInputAction(this.onMouseMove.bind(this), Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+    this.hander.setInputAction(
+      this.onMouseMove.bind(this),
+      Cesium.ScreenSpaceEventType.MOUSE_MOVE
+    );
     this.hander.setInputAction(
       this.onRightClick.bind(this),
       Cesium.ScreenSpaceEventType.RIGHT_CLICK
@@ -29,7 +35,7 @@ export default class DrawBase {
     this.isDraw = false;
   }
 
-  private onLeftClick(ev: Cesium.ScreenSpaceEventHandler.PositionedEvent) {}
-  private onMouseMove(ev: Cesium.ScreenSpaceEventHandler.MotionEvent) {}
-  private onRightClick(ev: Cesium.ScreenSpaceEventHandler.PositionedEvent) {}
+  onLeftClick(ev: Cesium.ScreenSpaceEventHandler.PositionedEvent) {}
+  onMouseMove(ev: Cesium.ScreenSpaceEventHandler.MotionEvent) {}
+  onRightClick(ev: Cesium.ScreenSpaceEventHandler.PositionedEvent) {}
 }

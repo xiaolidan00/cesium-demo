@@ -10,7 +10,7 @@ export class PosUtil {
     return positions.map((it) => [it[0], it[1]]);
   }
   static posHeightTransform(positions: number[][]) {
-    return positions.map((it) => [it[0], it[1], it[2] || 1]);
+    return positions.map((it) => [it[0], it[1], it[2] || 0]);
   }
   static Cartesian3ToCartographic(c: Cesium.Cartesian3) {
     return Cesium.Cartographic.fromCartesian(c);
@@ -40,10 +40,12 @@ export class PosUtil {
     if (Cesium.defined(cartesian)) {
       return cartesian;
     } else {
-      cartesian = this.pickTerrainPos(c);
-      if (Cesium.defined(cartesian)) {
-        return cartesian;
-      } else {
+      const ray = this.viewer.camera.getPickRay(c);
+      if (ray) {
+        cartesian = this.viewer.scene.globe.pick(ray, this.viewer.scene);
+        if (Cesium.defined(cartesian)) {
+          return cartesian;
+        }
       }
     }
   }
@@ -97,6 +99,57 @@ export class PosUtil {
       return this.Cartesian3ToWGS84(pos);
     }
   }
+  static is2D() {
+    return this.viewer.scene.mode === Cesium.SceneMode.SCENE2D;
+  }
+  static getViewBoundary() {
+    const rect = this.viewer.camera.computeViewRectangle();
+    if (rect)
+      return {
+        left: Cesium.Math.toDegrees(rect.east),
+        right: Cesium.Math.toDegrees(rect.west),
+
+        bottom: Cesium.Math.toDegrees(rect.south),
+        top: Cesium.Math.toDegrees(rect.north),
+      };
+  }
+  static pickPos2D3D(c: Cesium.Cartesian2) {
+    if (this.is2D()) {
+      let cartesian;
+      const ray = this.viewer.camera.getPickRay(c);
+      if (ray) {
+        cartesian = this.viewer.scene.globe.pick(ray, this.viewer.scene);
+        if (Cesium.defined(cartesian)) {
+          return cartesian;
+        }
+      }
+    } else {
+      const rect = this.getViewBoundary();
+      if (!rect) return;
+      let cartesian;
+      if (rect && this.viewer.scene.pick(c)) {
+        cartesian = this.viewer.scene.pickPosition(c);
+        const cc = this.Cartesian2ToWGS84(cartesian);
+        if (
+          Cesium.defined(cartesian) &&
+          cc &&
+          cc[0] >= rect.left &&
+          cc[0] <= rect.right &&
+          cc[1] >= rect.bottom &&
+          cc[1] <= rect.top
+        ) {
+          return cartesian;
+        }
+      }
+      const ray = this.viewer.camera.getPickRay(c);
+      if (ray) {
+        cartesian = this.viewer.scene.globe.pick(ray, this.viewer.scene);
+        if (Cesium.defined(cartesian)) {
+          return cartesian;
+        }
+      }
+    }
+  }
   static pickTilePos(c: Cesium.Cartesian2) {
     if (this.viewer.scene.pick(c)) {
       let cartesian = this.viewer.scene.pickPosition(c);
@@ -124,20 +177,6 @@ export class PosUtil {
     //     }
     //   }
     // }
-  }
-  static pickPos2D3D(c: Cesium.Cartesian2) {
-    if (this.viewer.scene.mode === Cesium.SceneMode.SCENE2D) {
-      let cartesian;
-      const ray = this.viewer.camera.getPickRay(c);
-      if (ray) {
-        cartesian = this.viewer.scene.globe.pick(ray, this.viewer.scene);
-        if (Cesium.defined(cartesian)) {
-          return cartesian;
-        }
-      }
-    } else {
-      return this.pickPos(c);
-    }
   }
   static pickTerrainPos(c: Cesium.Cartesian2) {
     let cartesian;
