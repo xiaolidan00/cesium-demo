@@ -36,7 +36,7 @@ class LineDraw extends DrawBase {
   }
 
   openDraw() {
-    this.viewer.canvas.style.cursor = "url(cursor.png)";
+    this.viewer.canvas.style.cursor = `url(cursor.png), auto`;
     this.currentId = uuid();
     this.onListener();
   }

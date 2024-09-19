@@ -1,8 +1,8 @@
-import fs from 'fs';
-import urls from './urls.js';
+import fs from "fs";
+import urls from "./urls.js";
 
 function copyHtml() {
-  const indexPage = 'dist/index.html';
+  const indexPage = "dist/index.html";
   const list = [];
   urls.urls.forEach((item, idx) => {
     const filePath = item.name;
@@ -10,16 +10,26 @@ function copyHtml() {
     const newPath = `dist/${filePath}/index.html`;
     const newData = data
       .toString()
-      .replace('index.ts', 'index.js')
-      .replaceAll('/node_modules/cesium/Build/Cesium/', '/cesium-demo/cesium/')
+      .replace("index.ts", "index.js")
+      .replaceAll("/node_modules/cesium/Build/Cesium/", "/cesium-demo/cesium/")
       // .replaceAll('/node_modules/cesium', 'https://cesium.com/downloads/cesiumjs/releases/1.120')
-      .replace('<%- title %>', filePath);
+      .replace("<%- title %>", filePath);
     fs.writeFileSync(newPath, newData);
     list.push(
       `<h1>${idx + 1}.${
         item.title
       }</h1><p>访问地址：<a href="${filePath}/index.html">${filePath}/index.html</a></p>`
     );
+    const files = fs.readdirSync(`src/${filePath}/`);
+
+    files.forEach((f) => {
+      if (/\.(png|jpg|svg|gif)$/.test(f)) {
+        const fromFile = `src/${filePath}/${f}`;
+        fs.copyFile(fromFile, `dist/${filePath}/${f}`, (err) => {
+          if (err) console.log("fromFile", err);
+        });
+      }
+    });
   });
 
   fs.writeFileSync(
@@ -54,11 +64,11 @@ function copyHtml() {
   </head>
   <body>
   <div id="content"> 
-  ${list.join('')}
+  ${list.join("")}
   </div>
   </body>
 </html>`
   );
-  console.log('copyHtml ok');
+  console.log("copyHtml ok");
 }
 copyHtml();
