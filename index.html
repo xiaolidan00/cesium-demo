@@ -32,11 +32,12 @@
       console.log(urls);
 
       const content = urls.urls
-        .map(
-          (item, idx) =>
-            `<h1>${idx + 1}.${item.title}</h1><p>访问地址：<a href="src/${
-              item.name
-            }/index.html">src/${item.name}/index.html</a></p>`
+        .map((item, idx) =>
+          item.show
+            ? `<h1>${idx + 1}.${item.title}</h1><p>访问地址：<a href="src/${
+                item.name
+              }/index.html">src/${item.name}/index.html</a></p>`
+            : ''
         )
         .join('');
       document.getElementById('content').innerHTML = content;

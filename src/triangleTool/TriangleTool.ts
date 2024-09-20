@@ -37,10 +37,6 @@ class TriangleTool extends DrawBase {
     this.onListener();
   }
   closeTool() {
-    if (this.currentData) {
-      this.dataMap.set(this.currentId, this.currentData);
-    }
-
     this.currentId = '';
     this.currentData = null;
 
@@ -121,6 +117,7 @@ class TriangleTool extends DrawBase {
             id: this.currentId,
             positions: []
           };
+          this.dataMap.set(this.currentId, data);
           this.currentData = data;
         }
         this.currentData.positions.push(p);

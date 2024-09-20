@@ -1,19 +1,27 @@
 const urls = [
   {
     title: '绘制点线面',
-    name: 'draw'
+    name: 'draw',
+    show: true
   },
   {
     title: '自定义Primitive',
-    name: 'customPrimitive'
+    name: 'customPrimitive',
+    show: true
   },
   {
     title: '自定义Primitive绘制点线面',
-    name: 'draw'
+    name: 'draw',
+    show: true
   },
   {
     title: '三角测量',
-    name: 'triangleTool'
+    name: 'triangleTool',
+    show: true
+  },
+  {
+    title: '通视分析',
+    name: 'viewPoint'
   }
 ];
 const map = {};
