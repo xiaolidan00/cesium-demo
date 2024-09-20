@@ -1,49 +1,79 @@
-import * as Cesium from 'cesium';
+import * as Cesium from "cesium";
 
-import CustomLinePrimitive, { type CustomLinePrimitiveOption } from '../utils/CustomLinePrimitive';
+import CustomLinePrimitive, {
+  type CustomLinePrimitiveOption,
+} from "./CustomLinePrimitive";
 import CustomPolygonPrimitive, {
-  type CustomPolygonPrimitiveOption
-} from '../utils/CustomPolygonPrimitive';
+  type CustomPolygonPrimitiveOption,
+} from "./CustomPolygonPrimitive";
+import { PosUtil } from "../utils/PosUtil";
+import CustomPrimitive from "./CustomPrimitive";
 export type ColorArrType = [number, number, number, number];
 
 export class DynamicPrimitive {
   static viewer: Cesium.Viewer;
   static lines = new Map<string, CustomLinePrimitive>();
   static polygons = new Map<string, CustomPolygonPrimitive>();
-  static addPolygon(set: CustomPolygonPrimitiveOption) {
+  static group: Cesium.PrimitiveCollection = new Cesium.PrimitiveCollection();
+  static isTerrain: boolean;
+  static init(v: Cesium.Viewer, isTerrain: boolean) {
+    this.viewer = v;
+    this.viewer.scene.primitives.add(this.group);
+    this.isTerrain = isTerrain;
+  }
+  static async updateGroundPos(positions: number[][]) {
+    for (let i = 0; i < positions.length; i++) {
+      const a = positions[i];
+      const height = await PosUtil.getLngLatTerrainHeight(a[0], a[1]);
+      a[2] = height;
+    }
+  }
+  static async addPolygon(set: CustomPolygonPrimitiveOption) {
+    if (set.isGround) {
+      await this.updateGroundPos(set.positions);
+    }
     let p = new CustomPolygonPrimitive({
       ...set,
-      isTerrain:
-        this.viewer.scene.mode == Cesium.SceneMode.SCENE3D &&
-        this.viewer.terrainProvider instanceof Cesium.CesiumTerrainProvider
+      isTerrain: this.isTerrain,
     });
-    this.viewer.scene.primitives.add(p);
+    this.group.add(p);
     this.polygons.set(set.id, p);
+    this.group.raiseToTop(p);
+    this.viewer.scene.primitives.raiseToTop(this.group);
     return p;
   }
-  static updatePolygonPos(id: string, pos: number[][]) {
+  static async updatePolygonPos(id: string, pos: number[][]) {
     const p = this.polygons.get(id);
     if (p) {
+      if (p.isGround) {
+        await this.updateGroundPos(pos);
+      }
       p.positions = pos;
     }
   }
 
-  static addPolyline(set: CustomLinePrimitiveOption) {
+  static async addPolyline(set: CustomLinePrimitiveOption) {
+    if (set.isGround) {
+      await this.updateGroundPos(set.positions);
+    }
     let line = new CustomLinePrimitive({
       ...set,
-      isTerrain:
-        this.viewer.scene.mode == Cesium.SceneMode.SCENE3D &&
-        this.viewer.terrainProvider instanceof Cesium.CesiumTerrainProvider
+      isTerrain: this.isTerrain,
     });
 
-    this.viewer.scene.primitives.add(line);
+    this.group.add(line);
 
     this.lines.set(set.id, line);
+    this.group.raiseToTop(line);
+    this.viewer.scene.primitives.raiseToTop(this.group);
     return line;
   }
-  static updatePolylinePos(id: string, pos: number[][]) {
+  static async updatePolylinePos(id: string, pos: number[][]) {
     const line = this.lines.get(id);
     if (line) {
+      if (line.isGround) {
+        await this.updateGroundPos(pos);
+      }
       line.positions = pos;
     }
   }
@@ -51,7 +81,7 @@ export class DynamicPrimitive {
   static removePolyline(id: string) {
     const line = this.lines.get(id);
     if (line) {
-      this.viewer.scene.primitives.remove(line);
+      this.group.remove(line);
       line.destroy();
     }
     this.lines.delete(id);
@@ -59,22 +89,19 @@ export class DynamicPrimitive {
   static removePolygon(id: string) {
     const p = this.polygons.get(id);
     if (p) {
-      this.viewer.scene.primitives.remove(p);
+      this.group.remove(p);
       p.destroy();
     }
     this.polygons.delete(id);
   }
-  static updateTerrain() {
-    const isTerrain =
-      this.viewer.scene.mode == Cesium.SceneMode.SCENE3D &&
-      this.viewer.terrainProvider instanceof Cesium.CesiumTerrainProvider;
-
+  static updateTerrain(isTerrain: boolean) {
+    this.isTerrain = isTerrain;
     this.lines.forEach((line) => {
-      line.isTerrain = isTerrain;
+      if (line.isGround) line.isTerrain = isTerrain;
     });
 
     this.polygons.forEach((polygon) => {
-      polygon.isTerrain = isTerrain;
+      if (polygon.isGround) polygon.isTerrain = isTerrain;
     });
   }
   static getLine(id: string) {

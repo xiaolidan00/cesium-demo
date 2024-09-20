@@ -55,6 +55,7 @@ export class PosUtil {
       return this.Cartesian3ToWGS84(cartesian);
     }
   }
+
   static picPoskModelHeight(c: Cesium.Cartographic) {
     return new Promise<number>((resolve) => {
       this.viewer.scene
@@ -73,6 +74,19 @@ export class PosUtil {
     if (this.viewer.scene.sampleHeightSupported) {
       return this.viewer.scene.sampleHeight(c);
     }
+  }
+  static getLngLatTerrainHeight(lng: number, lat: number) {
+    return new Promise<number>((resolve) => {
+      Cesium.sampleTerrainMostDetailed(this.terrainProvider, [
+        Cesium.Cartographic.fromDegrees(lng, lat),
+      ]).then((pos: Cesium.Cartographic[]) => {
+        if (pos?.length) {
+          resolve(pos[0].height);
+        } else {
+          resolve(0);
+        }
+      });
+    });
   }
   static pickPosTerrainHeight(c: Cesium.Cartographic) {
     return new Promise<number>((resolve) => {
