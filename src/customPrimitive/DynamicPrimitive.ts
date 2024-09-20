@@ -1,13 +1,11 @@
-import * as Cesium from "cesium";
+import * as Cesium from 'cesium';
 
-import CustomLinePrimitive, {
-  type CustomLinePrimitiveOption,
-} from "./CustomLinePrimitive";
+import CustomLinePrimitive, { type CustomLinePrimitiveOption } from './CustomLinePrimitive';
 import CustomPolygonPrimitive, {
-  type CustomPolygonPrimitiveOption,
-} from "./CustomPolygonPrimitive";
-import { PosUtil } from "../utils/PosUtil";
-import CustomPrimitive from "./CustomPrimitive";
+  type CustomPolygonPrimitiveOption
+} from './CustomPolygonPrimitive';
+import { PosUtil } from '../utils/PosUtil';
+import CustomPrimitive from './CustomPrimitive';
 export type ColorArrType = [number, number, number, number];
 
 export class DynamicPrimitive {
@@ -16,10 +14,10 @@ export class DynamicPrimitive {
   static polygons = new Map<string, CustomPolygonPrimitive>();
   static group: Cesium.PrimitiveCollection = new Cesium.PrimitiveCollection();
   static isTerrain: boolean;
-  static init(v: Cesium.Viewer, isTerrain: boolean) {
+  static init(v: Cesium.Viewer, isTerrain?: boolean) {
     this.viewer = v;
     this.viewer.scene.primitives.add(this.group);
-    this.isTerrain = isTerrain;
+    this.isTerrain = isTerrain || false;
   }
   static async updateGroundPos(positions: number[][]) {
     for (let i = 0; i < positions.length; i++) {
@@ -34,7 +32,7 @@ export class DynamicPrimitive {
     }
     let p = new CustomPolygonPrimitive({
       ...set,
-      isTerrain: this.isTerrain,
+      isTerrain: this.isTerrain
     });
     this.group.add(p);
     this.polygons.set(set.id, p);
@@ -58,7 +56,7 @@ export class DynamicPrimitive {
     }
     let line = new CustomLinePrimitive({
       ...set,
-      isTerrain: this.isTerrain,
+      isTerrain: this.isTerrain
     });
 
     this.group.add(line);

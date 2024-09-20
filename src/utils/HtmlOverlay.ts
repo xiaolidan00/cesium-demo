@@ -1,5 +1,6 @@
-import * as Cesium from "cesium";
-import { type LngLatHeightType } from "./PosUtil";
+import * as Cesium from 'cesium';
+import './htmloverlay.scss';
+import { type LngLatHeightType } from './PosUtil';
 export type HtmlOverlayType = {
   id: string;
   position: LngLatHeightType;
@@ -18,14 +19,11 @@ export class HtmlOverlay {
   listener: Cesium.Event.RemoveCallback;
   constructor(viewer: Cesium.Viewer) {
     this.viewer = viewer;
-    this.overlayBody = document.createElement("div");
-    this.overlayBody.id = "cesium_overlayBody";
+
+    this.overlayBody = document.createElement('div');
+    this.overlayBody.id = 'cesium_overlayBody';
     document.body.appendChild(this.overlayBody);
-    this.styleDom = document.createElement("style");
-    this.styleDom.id = "cesium_overlayStyle";
-    this.styleDom.innerHTML = `#cesium_overlayBody{position:absolute;z-index:999;height:100%;width:100%;top:0px;left:0px;pointer-events:none;overflow:hidden;}
-    .cesium-html-overlay{position:absolute;}`;
-    document.head.appendChild(this.styleDom);
+
     this.scratch = new Cesium.Cartesian2();
     this.listener = this.viewer.scene.preRender.addEventListener(() => {
       this.htmlMap.forEach((item) => {
@@ -33,22 +31,25 @@ export class HtmlOverlay {
       });
     });
   }
+  getHtml(id: string) {
+    return this.htmlMap.get(id);
+  }
   showHtml(id: string) {
     const set = this.htmlMap.get(id);
     if (set?.dom) {
-      set.dom.style.display = "";
+      set.dom.style.display = '';
     }
   }
   hideHtml(id: string) {
     const set = this.htmlMap.get(id);
     if (set?.dom) {
-      set.dom.style.display = "none";
+      set.dom.style.display = 'none';
     }
   }
   addHtml(set: HtmlOverlayType) {
-    const dom = document.createElement("div");
+    const dom = document.createElement('div');
     dom.id = set.id;
-    dom.className = "cesium-html-overlay";
+    dom.className = 'cesium-html-overlay';
     dom.innerHTML = set.content;
     this.overlayBody.appendChild(dom);
     set.dom = dom;
@@ -59,10 +60,7 @@ export class HtmlOverlay {
   updatePos(item: HtmlOverlayType) {
     const position = Cesium.Cartesian3.fromDegrees(...item.position);
     const dom = item.dom;
-    const canvasPosition = this.viewer.scene.cartesianToCanvasCoordinates(
-      position,
-      this.scratch
-    );
+    const canvasPosition = this.viewer.scene.cartesianToCanvasCoordinates(position, this.scratch);
     if (dom && Cesium.defined(canvasPosition)) {
       dom.style.top = `${canvasPosition.y}px`;
       dom.style.left = `${canvasPosition.x}px`;
@@ -76,11 +74,15 @@ export class HtmlOverlay {
     const item = this.htmlMap.get(set.id);
 
     if (item?.dom) {
+      const newSet = {
+        ...item,
+        ...set
+      };
       const dom = item.dom;
-      dom.innerHTML = set.content;
-      set.dom = dom;
-      this.htmlMap.set(set.id, set);
-      this.updatePos(set);
+      dom.innerHTML = newSet.content;
+      newSet.dom = dom;
+      this.htmlMap.set(newSet.id, newSet);
+      this.updatePos(newSet);
     }
   }
   removeHtml(id: string) {

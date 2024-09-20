@@ -1,9 +1,9 @@
-import * as Cesium from "cesium";
+import * as Cesium from 'cesium';
 
-import { LngLatHeightType, PosUtil } from "./../utils/PosUtil";
+import { LngLatHeightType, PosUtil } from './../utils/PosUtil';
 
-import DrawBase from "../utils/DrawBase";
-import { uuid } from "../utils/tool";
+import DrawBase from '../utils/DrawBase';
+import { uuid } from '../utils/tool';
 
 type LineDataType = {
   positions: number[][];
@@ -16,19 +16,19 @@ class LineDraw extends DrawBase {
 
   lineMap = new Map<string, LineDataType>();
 
-  currentId: string = "";
+  currentId: string = '';
   positions: number[][] = [];
   lineStyle = {
     width: 5,
     material: Cesium.Color.RED,
-    clampToGround: true,
+    clampToGround: true
   };
   pointStyle = {
     pixelSize: 10,
     color: Cesium.Color.WHITE,
     outlineColor: Cesium.Color.RED,
     outlineWidth: 5,
-    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
   };
 
   constructor(v: Cesium.Viewer) {
@@ -36,7 +36,6 @@ class LineDraw extends DrawBase {
   }
 
   openDraw() {
-    this.viewer.canvas.style.cursor = `url(cursor.png), auto`;
     this.currentId = uuid();
     this.onListener();
   }
@@ -46,16 +45,15 @@ class LineDraw extends DrawBase {
         Cesium.Cartesian3.fromDegreesArray(this.positions.flat(1))
       );
     }
-    this.viewer.canvas.style.cursor = "default";
-    this.currentId = "";
+
+    this.currentId = '';
     this.currentData = null;
     this.positions = [];
     this.offListener();
   }
   drawLine(positions: number[][]) {
     if (!this.currentData) return;
-    this.positions =
-      positions?.length === 1 ? [positions[0], positions[0]] : positions;
+    this.positions = positions?.length === 1 ? [positions[0], positions[0]] : positions;
     if (!this.currentData.line) {
       this.currentData.line = new Cesium.Entity({
         id: this.currentId,
@@ -63,23 +61,23 @@ class LineDraw extends DrawBase {
           positions: new Cesium.CallbackProperty(() => {
             return Cesium.Cartesian3.fromDegreesArray(this.positions.flat(1));
           }, false),
-          ...this.lineStyle,
-        },
+          ...this.lineStyle
+        }
       });
       this.viewer.entities.add(this.currentData.line);
     }
     const oldMap = { ...this.currentData.point };
-    const newMap: LineDataType["point"] = {};
+    const newMap: LineDataType['point'] = {};
     for (let i = 0; i < positions.length; i++) {
       const p = [positions[i][0], positions[i][1]];
-      const id = this.currentId + p.join("_");
+      const id = this.currentId + p.join('_');
       if (!oldMap[id]) {
         this.viewer.entities.add({
           id,
           position: Cesium.Cartesian3.fromDegrees(p[0], p[1]),
           point: {
-            ...this.pointStyle,
-          },
+            ...this.pointStyle
+          }
         });
       }
       newMap[id] = 1;
@@ -121,7 +119,7 @@ class LineDraw extends DrawBase {
             positions: [],
 
             line: null,
-            point: {},
+            point: {}
           };
           this.lineMap.set(this.currentId, line);
 

@@ -1,0 +1,13 @@
+#cesium_overlayBody {
+  position: absolute;
+  z-index: 999;
+  height: 100%;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  pointer-events: none;
+  overflow: hidden;
+}
+.cesium-html-overlay {
+  position: absolute;
+}

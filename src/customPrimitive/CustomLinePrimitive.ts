@@ -1,12 +1,12 @@
-import * as Cesium from "cesium";
+import * as Cesium from 'cesium';
 
-import CustomPrimitive, { type CustomPrimitiveOption } from "./CustomPrimitive";
-import { PosUtil } from "../utils/PosUtil";
+import CustomPrimitive, { type CustomPrimitiveOption } from './CustomPrimitive';
+import { PosUtil } from '../utils/PosUtil';
 
 export type CustomLinePrimitiveOption = CustomPrimitiveOption & {
   color: Cesium.Color;
   width: number;
-
+  isClose?: boolean;
   isDashed?: boolean;
   dashLength?: number;
 
@@ -23,9 +23,9 @@ class CustomLinePrimitive extends CustomPrimitive {
   _linePrimitive: any;
 
   color: Cesium.Color;
-  _color: Cesium.Color = Cesium.Color.RED;
-  width: number;
 
+  width: number;
+  isClose?: boolean;
   isDashed?: boolean;
   dashLength?: number;
 
@@ -44,7 +44,7 @@ class CustomLinePrimitive extends CustomPrimitive {
 
     this.isDashed = options.isDashed;
     this.dashLength = options.dashLength || 20;
-
+    this.isClose = options.isClose || false;
     this.isPoint = options.isPoint || false;
     this.pointSize = options.pointSize || 10;
     this.pointColor = options.pointColor || Cesium.Color.WHITE;
@@ -79,32 +79,29 @@ class CustomLinePrimitive extends CustomPrimitive {
         pointColor: this.pointColor,
         pointOutline: this.pointOutline,
         pointOutlineColor: this.pointOutlineColor,
-        pointOutlineWidth: this.pointOutlineWidth,
+        pointOutlineWidth: this.pointOutlineWidth
       });
     }
 
-    this._linePrimitive &&
-      this._primitive &&
-      this._primitive.remove(this._linePrimitive);
+    this._linePrimitive && this._primitive && this._primitive.remove(this._linePrimitive);
     // this._linePrimitive = this._linePrimitive && this._linePrimitive.destroy();
     this._linePrimitive = this.getLinePrimitive({
       outline: true,
       outlineColor: this.color,
       outlineWidth: this.width,
-      isClose: false,
-      isDashed: this.isDashed,
+      isClose: this.isClose,
+      isDashed: this.isDashed
     });
 
     if (this._linePrimitive && !this._primitive.contains(this._linePrimitive)) {
       this._primitive.add(this._linePrimitive);
     }
 
-    if (
-      this.isPoint &&
-      this._pointPrimitive &&
-      !this._primitive.contains(this._pointPrimitive)
-    ) {
-      this._primitive.add(this._pointPrimitive);
+    if (this.isPoint && this._pointPrimitive) {
+      if (!this._primitive.contains(this._pointPrimitive)) {
+        this._primitive.add(this._pointPrimitive);
+      }
+      this._primitive.raiseToTop(this._pointPrimitive);
     }
     if (!this._primitive) return;
 

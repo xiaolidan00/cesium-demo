@@ -1,7 +1,7 @@
-import * as Cesium from "cesium";
+import * as Cesium from 'cesium';
 
-import { PosUtil } from "../utils/PosUtil";
-import CustomPrimitive, { type CustomPrimitiveOption } from "./CustomPrimitive";
+import { PosUtil } from '../utils/PosUtil';
+import CustomPrimitive, { type CustomPrimitiveOption } from './CustomPrimitive';
 
 export type CustomPolygonPrimitiveOption = CustomPrimitiveOption & {
   color?: Cesium.Color;
@@ -71,11 +71,9 @@ class CustomPolygonPrimitive extends CustomPrimitive {
     if (!this._primitive) {
       this._primitive = new Cesium.PrimitiveCollection();
     }
-    console.log("%cthis._primitive", "background:yellow", this._primitive);
+    console.log('%cthis._primitive', 'background:yellow', this._primitive);
     if (this.outline) {
-      this._linePrimitive &&
-        this._primitive &&
-        this._primitive.remove(this._linePrimitive);
+      this._linePrimitive && this._primitive && this._primitive.remove(this._linePrimitive);
       // this._linePrimitive = this._linePrimitive && this._linePrimitive.destroy();
       if (this.positions.length >= 2) {
         this._linePrimitive = this.getLinePrimitive({
@@ -83,7 +81,7 @@ class CustomPolygonPrimitive extends CustomPrimitive {
           outlineColor: this.outlineColor,
           outlineWidth: this.outlineWidth,
           isClose: true,
-          isDashed: false,
+          isDashed: false
         });
       }
     }
@@ -93,42 +91,32 @@ class CustomPolygonPrimitive extends CustomPrimitive {
         pointColor: this.pointColor,
         pointOutline: this.pointOutline,
         pointOutlineColor: this.pointOutlineColor,
-        pointOutlineWidth: this.pointOutlineWidth,
+        pointOutlineWidth: this.pointOutlineWidth
       });
     }
 
-    this._polygonPrimitive &&
-      this._primitive &&
-      this._primitive.remove(this._polygonPrimitive);
+    this._polygonPrimitive && this._primitive && this._primitive.remove(this._polygonPrimitive);
     // this._polygonPrimitive =
     //   this._polygonPrimitive && this._polygonPrimitive.destroy();
     if (this.positions.length >= 2) {
       this._polygonPrimitive = this.getPolygonPrimitive({
-        color: this.color,
+        color: this.color
       });
     }
-    if (
-      this._polygonPrimitive &&
-      !this._primitive.contains(this._polygonPrimitive)
-    ) {
+    if (this._polygonPrimitive && !this._primitive.contains(this._polygonPrimitive)) {
       this._primitive.add(this._polygonPrimitive);
     }
 
     //后添加的在上面
-    if (
-      this.outline &&
-      this._linePrimitive &&
-      !this._primitive.contains(this._linePrimitive)
-    ) {
+    if (this.outline && this._linePrimitive && !this._primitive.contains(this._linePrimitive)) {
       this._primitive.add(this._linePrimitive);
     }
 
-    if (
-      this.isPoint &&
-      this._pointPrimitive &&
-      !this._primitive.contains(this._pointPrimitive)
-    ) {
-      this._primitive.add(this._pointPrimitive);
+    if (this.isPoint && this._pointPrimitive) {
+      if (!this._primitive.contains(this._pointPrimitive)) {
+        this._primitive.add(this._pointPrimitive);
+      }
+      this._primitive.raiseToTop(this._pointPrimitive);
     }
 
     if (this._primitive) {

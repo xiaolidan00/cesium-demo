@@ -52,7 +52,7 @@ export class CesiumMap {
       //     // requestWaterMask: true
       //   }),
       //阴影
-      shadows: true,
+      // shadows: true,
       baseLayer: new Cesium.ImageryLayer(imageryProvider)
     });
     //Cesium的logo

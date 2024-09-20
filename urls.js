@@ -8,6 +8,10 @@ const urls = [
     name: 'customPrimitive'
   },
   {
+    title: '自定义Primitive绘制点线面',
+    name: 'draw'
+  },
+  {
     title: '三角测量',
     name: 'triangleTool'
   }

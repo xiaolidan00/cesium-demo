@@ -1,8 +1,8 @@
-import * as Cesium from "cesium";
+import * as Cesium from 'cesium';
 
-import DrawBase from "../utils/DrawBase";
-import { PosUtil } from "./../utils/PosUtil";
-import { uuid } from "../utils/tool";
+import DrawBase from '../utils/DrawBase';
+import { PosUtil } from './../utils/PosUtil';
+import { uuid } from '../utils/tool';
 
 type PolygonDataType = {
   positions: number[][];
@@ -15,23 +15,23 @@ class PolygonDraw extends DrawBase {
 
   polygonMap = new Map<string, PolygonDataType>();
 
-  currentId: string = "";
+  currentId: string = '';
   positions: number[][] = [];
   polygonStyle = {
     material: Cesium.Color.RED.withAlpha(0.5),
-    classificationType: Cesium.ClassificationType.BOTH,
+    classificationType: Cesium.ClassificationType.BOTH
   };
   lineStyle = {
     width: 5,
     material: Cesium.Color.RED,
-    clampToGround: true,
+    clampToGround: true
   };
   pointStyle = {
     pixelSize: 10,
     color: Cesium.Color.WHITE,
     outlineColor: Cesium.Color.RED,
     outlineWidth: 5,
-    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
   };
 
   constructor(v: Cesium.Viewer) {
@@ -39,7 +39,6 @@ class PolygonDraw extends DrawBase {
   }
 
   openDraw() {
-    this.viewer.canvas.style.cursor = `url(cursor.png), auto`;
     this.currentId = uuid();
     this.onListener();
   }
@@ -47,23 +46,17 @@ class PolygonDraw extends DrawBase {
     if (this.currentData?.polygon) {
       //转静态变量
       if (this.currentData.polygon?.polyline?.positions)
-        this.currentData.polygon.polyline.positions =
-          new Cesium.ConstantProperty(
-            Cesium.Cartesian3.fromDegreesArray(
-              [...this.positions, this.positions[0]].flat(1)
-            )
-          );
+        this.currentData.polygon.polyline.positions = new Cesium.ConstantProperty(
+          Cesium.Cartesian3.fromDegreesArray([...this.positions, this.positions[0]].flat(1))
+        );
       if (this.currentData.polygon?.polygon?.hierarchy) {
-        this.currentData.polygon.polygon.hierarchy =
-          new Cesium.ConstantProperty({
-            positions: Cesium.Cartesian3.fromDegreesArray(
-              this.positions.flat(1)
-            ),
-          });
+        this.currentData.polygon.polygon.hierarchy = new Cesium.ConstantProperty({
+          positions: Cesium.Cartesian3.fromDegreesArray(this.positions.flat(1))
+        });
       }
     }
-    this.viewer.canvas.style.cursor = "default";
-    this.currentId = "";
+
+    this.currentId = '';
     this.currentData = null;
     this.positions = [];
     this.offListener();
@@ -85,33 +78,31 @@ class PolygonDraw extends DrawBase {
               [...this.positions, this.positions[0]].flat(1)
             );
           }, false),
-          ...this.lineStyle,
+          ...this.lineStyle
         },
         polygon: {
           hierarchy: new Cesium.CallbackProperty(() => {
             return {
-              positions: Cesium.Cartesian3.fromDegreesArray(
-                this.positions.flat(1)
-              ),
+              positions: Cesium.Cartesian3.fromDegreesArray(this.positions.flat(1))
             };
           }, false),
-          ...this.polygonStyle,
-        },
+          ...this.polygonStyle
+        }
       });
       this.viewer.entities.add(this.currentData.polygon);
     }
     const oldMap = { ...this.currentData.point };
-    const newMap: PolygonDataType["point"] = {};
+    const newMap: PolygonDataType['point'] = {};
     for (let i = 0; i < positions.length; i++) {
       const p = [positions[i][0], positions[i][1]];
-      const id = this.currentId + p.join("_");
+      const id = this.currentId + p.join('_');
       if (!oldMap[id]) {
         this.viewer.entities.add({
           id,
           position: Cesium.Cartesian3.fromDegrees(p[0], p[1]),
           point: {
-            ...this.pointStyle,
-          },
+            ...this.pointStyle
+          }
         });
       }
       newMap[id] = 1;
@@ -153,7 +144,7 @@ class PolygonDraw extends DrawBase {
             positions: [],
 
             polygon: null,
-            point: {},
+            point: {}
           };
 
           this.polygonMap.set(this.currentId, polygon);
