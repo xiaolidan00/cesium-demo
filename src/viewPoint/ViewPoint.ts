@@ -42,8 +42,8 @@ class ViewPoint extends DrawBase {
         polyline: {
           positions: positions,
           ...this.lineStyle,
-          material: color,
-          depthFailMaterial: color
+          material: color
+          //   depthFailMaterial: color
         }
       });
     } else {
@@ -55,8 +55,8 @@ class ViewPoint extends DrawBase {
     const positions = pos;
     //计算两点分量差异
     const substract = Cesium.Cartesian3.subtract(
-      positions[0],
       positions[1],
+      positions[0],
       new Cesium.Cartesian3()
     );
     //标准化计算射线方向
@@ -65,6 +65,7 @@ class ViewPoint extends DrawBase {
     const ray = new Cesium.Ray(positions[0], direction);
     //计算交点
     const result = this.viewer.scene.globe.pick(ray, this.viewer.scene);
+
     if (result) {
       this.drawLine(1, [result, positions[0]], Cesium.Color.GREEN); //可视
       this.drawLine(2, [result, positions[1]], Cesium.Color.RED); //不可视
@@ -92,14 +93,14 @@ class ViewPoint extends DrawBase {
       }
     }
   }
-  onMouseMove(ev: Cesium.ScreenSpaceEventHandler.MotionEvent): void {
-    if (this.isDraw && this.currentData) {
-      const p = PosUtil.pickPos(ev.endPosition);
-      if (p) {
-        this.calcPoints([this.currentData.positions[0], p]);
-      }
-    }
-  }
+  //   onMouseMove(ev: Cesium.ScreenSpaceEventHandler.MotionEvent): void {
+  //     if (this.isDraw && this.currentData) {
+  //       const p = PosUtil.pickPos(ev.endPosition);
+  //       if (p) {
+  //         this.calcPoints([this.currentData.positions[0], p]);
+  //       }
+  //     }
+  //   }
   onRightClick(ev: Cesium.ScreenSpaceEventHandler.PositionedEvent): void {
     if (this.isDraw && this.currentData) {
       const p = PosUtil.pickPos(ev.position);

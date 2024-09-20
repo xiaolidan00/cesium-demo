@@ -28,6 +28,7 @@ class MyCesiumMap extends CesiumMap {
     );
   }
   async init() {
+    this.viewer.scene.globe.depthTestAgainstTerrain = true; //地面以下不可见（高程遮挡） 会导致图标被地面覆盖问题
     const osmBuildingsTileset = await Cesium.createOsmBuildingsAsync();
     this.viewer.scene.primitives.add(osmBuildingsTileset);
     // const terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(

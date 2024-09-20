@@ -1,4 +1,4 @@
-import * as Cesium from "cesium";
+import * as Cesium from 'cesium';
 
 export type LngLatHeightType = [number, number, number];
 //地球半径 单位m
@@ -12,6 +12,9 @@ export class PosUtil {
   static posHeightTransform(positions: number[][]) {
     return positions.map((it) => [it[0], it[1], it[2] || 0]);
   }
+  static Cartesian3ToCartesian2(c: Cesium.Cartesian3) {
+    return this.viewer.scene.cartesianToCanvasCoordinates(c, new Cesium.Cartesian2());
+  }
   static Cartesian3ToCartographic(c: Cesium.Cartesian3) {
     return Cesium.Cartographic.fromCartesian(c);
   }
@@ -19,11 +22,7 @@ export class PosUtil {
     return Cesium.Cartesian3.fromRadians(c.longitude, c.latitude, c.height);
   }
   static CartographicToWGS84(c: Cesium.Cartographic): LngLatHeightType {
-    return [
-      Cesium.Math.toDegrees(c.longitude),
-      Cesium.Math.toDegrees(c.latitude),
-      c.height,
-    ];
+    return [Cesium.Math.toDegrees(c.longitude), Cesium.Math.toDegrees(c.latitude), c.height];
   }
   static Cartesian3ToWGS84(c: Cesium.Cartesian3): LngLatHeightType {
     const c1 = this.Cartesian3ToCartographic(c);
@@ -78,7 +77,7 @@ export class PosUtil {
   static getLngLatTerrainHeight(lng: number, lat: number) {
     return new Promise<number>((resolve) => {
       Cesium.sampleTerrainMostDetailed(this.terrainProvider, [
-        Cesium.Cartographic.fromDegrees(lng, lat),
+        Cesium.Cartographic.fromDegrees(lng, lat)
       ]).then((pos: Cesium.Cartographic[]) => {
         if (pos?.length) {
           resolve(pos[0].height);
@@ -91,7 +90,7 @@ export class PosUtil {
   static pickPosTerrainHeight(c: Cesium.Cartographic) {
     return new Promise<number>((resolve) => {
       Cesium.sampleTerrainMostDetailed(this.terrainProvider, [
-        new Cesium.Cartographic(c.longitude, c.latitude),
+        new Cesium.Cartographic(c.longitude, c.latitude)
       ]).then((pos: Cesium.Cartographic[]) => {
         if (pos?.length) {
           resolve(pos[0].height);
@@ -124,7 +123,7 @@ export class PosUtil {
         right: Cesium.Math.toDegrees(rect.west),
 
         bottom: Cesium.Math.toDegrees(rect.south),
-        top: Cesium.Math.toDegrees(rect.north),
+        top: Cesium.Math.toDegrees(rect.north)
       };
   }
   static pickPos2D3D(c: Cesium.Cartesian2) {
@@ -203,10 +202,7 @@ export class PosUtil {
       }
     }
 
-    cartesian = this.viewer.scene.camera.pickEllipsoid(
-      c,
-      this.viewer.scene.globe.ellipsoid
-    );
+    cartesian = this.viewer.scene.camera.pickEllipsoid(c, this.viewer.scene.globe.ellipsoid);
     if (Cesium.defined(cartesian)) {
       return cartesian;
     }
