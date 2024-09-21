@@ -26,6 +26,14 @@ const urls = [
   {
     title: '缓冲区分析',
     name: 'buffer'
+  },
+  {
+    title: '地形开挖',
+    name: 'terrainClip'
+  },
+  {
+    title: '等高线',
+    name: 'elevation'
   }
 ];
 const map = {};
