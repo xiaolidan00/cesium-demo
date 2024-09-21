@@ -22,6 +22,10 @@ const urls = [
   {
     title: '通视分析',
     name: 'viewPoint'
+  },
+  {
+    title: '缓冲区分析',
+    name: 'buffer'
   }
 ];
 const map = {};
