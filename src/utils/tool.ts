@@ -25,6 +25,7 @@ export function createGui(config: GuiType[], dataObj: { [n: string]: boolean | s
     }
     if (ctrl && item.onChange) ctrl.onChange(item.onChange);
   });
+  return gui;
 }
 export const uuid = () => {
   const id = URL.createObjectURL(new Blob());

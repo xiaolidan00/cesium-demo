@@ -34,6 +34,18 @@ const urls = [
   {
     title: '等高线',
     name: 'elevation'
+  },
+  {
+    title: '坡向坡度分析',
+    name: 'terrainOrient'
+  },
+  {
+    title: '填挖方量计算',
+    name: 'terrainFill'
+  },
+  {
+    title: '距离面积计算',
+    name: 'distanceArea'
   }
 ];
 const map = {};
