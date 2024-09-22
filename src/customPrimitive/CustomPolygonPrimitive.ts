@@ -1,6 +1,5 @@
 import * as Cesium from 'cesium';
 
-import { PosUtil } from '../utils/PosUtil';
 import CustomPrimitive, { type CustomPrimitiveOption } from './CustomPrimitive';
 
 export type CustomPolygonPrimitiveOption = CustomPrimitiveOption & {
@@ -52,6 +51,7 @@ class CustomPolygonPrimitive extends CustomPrimitive {
   }
 
   update(frameState: any) {
+    //坐标点相关属性不变则保持
     if (
       this._primitive &&
       JSON.stringify(this.positions) === JSON.stringify(this._positions) &&
@@ -63,18 +63,19 @@ class CustomPolygonPrimitive extends CustomPrimitive {
 
       return;
     }
+    //更新坐标点相关属性
     this._positions = [...this.positions];
     this._isTerrain = this.isTerrain;
     this._isGround = this.isGround;
     this._isHeight = this.isHeight;
-
+    //创建图元集合
     if (!this._primitive) {
       this._primitive = new Cesium.PrimitiveCollection();
     }
-    console.log('%cthis._primitive', 'background:yellow', this._primitive);
+    //绘制线
     if (this.outline) {
       this._linePrimitive && this._primitive && this._primitive.remove(this._linePrimitive);
-      // this._linePrimitive = this._linePrimitive && this._linePrimitive.destroy();
+      //至少两个坐标点
       if (this.positions.length >= 2) {
         this._linePrimitive = this.getLinePrimitive({
           outline: this.outline,
@@ -85,6 +86,7 @@ class CustomPolygonPrimitive extends CustomPrimitive {
         });
       }
     }
+    //绘制点
     if (this.isPoint) {
       this.getPointPrimitive({
         pointSize: this.pointSize,
@@ -94,20 +96,20 @@ class CustomPolygonPrimitive extends CustomPrimitive {
         pointOutlineWidth: this.pointOutlineWidth
       });
     }
-
+    //绘制面
     this._polygonPrimitive && this._primitive && this._primitive.remove(this._polygonPrimitive);
-    // this._polygonPrimitive =
-    //   this._polygonPrimitive && this._polygonPrimitive.destroy();
-    if (this.positions.length >= 2) {
+    //至少两个坐标点
+    if (this.positions.length >= 3) {
       this._polygonPrimitive = this.getPolygonPrimitive({
         color: this.color
       });
     }
+
+    //如果未添加则添加到集合
     if (this._polygonPrimitive && !this._primitive.contains(this._polygonPrimitive)) {
       this._primitive.add(this._polygonPrimitive);
     }
 
-    //后添加的在上面
     if (this.outline && this._linePrimitive && !this._primitive.contains(this._linePrimitive)) {
       this._primitive.add(this._linePrimitive);
     }
@@ -116,6 +118,7 @@ class CustomPolygonPrimitive extends CustomPrimitive {
       if (!this._primitive.contains(this._pointPrimitive)) {
         this._primitive.add(this._pointPrimitive);
       }
+      //点集合置顶
       this._primitive.raiseToTop(this._pointPrimitive);
     }
 

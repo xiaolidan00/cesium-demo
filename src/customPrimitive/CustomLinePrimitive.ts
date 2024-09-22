@@ -1,22 +1,22 @@
 import * as Cesium from 'cesium';
 
 import CustomPrimitive, { type CustomPrimitiveOption } from './CustomPrimitive';
-import { PosUtil } from '../utils/PosUtil';
 
 export type CustomLinePrimitiveOption = CustomPrimitiveOption & {
-  color: Cesium.Color;
-  width: number;
-  isClose?: boolean;
-  isDashed?: boolean;
-  dashLength?: number;
+  color: Cesium.Color; //线颜色
+  width: number; //线宽
+  isClose?: boolean; //是否封闭图形
+  //虚线
+  isDashed?: boolean; //是否虚线
+  dashLength?: number; //虚线长度
 
   //点的样式
-  isPoint?: boolean;
-  pointSize?: number;
-  pointColor?: Cesium.Color;
-  pointOutline?: boolean;
-  pointOutlineColor?: Cesium.Color;
-  pointOutlineWidth?: number;
+  isPoint?: boolean; //是否开启
+  pointSize?: number; //点大小
+  pointColor?: Cesium.Color; //点颜色
+  pointOutline?: boolean; //点是否有边框
+  pointOutlineColor?: Cesium.Color; //点边框颜色
+  pointOutlineWidth?: number; //点边框宽度
 };
 
 class CustomLinePrimitive extends CustomPrimitive {
@@ -54,6 +54,7 @@ class CustomLinePrimitive extends CustomPrimitive {
   }
 
   update(frameState: any) {
+    //坐标点相关属性不变则保持
     if (
       this._primitive &&
       JSON.stringify(this.positions) === JSON.stringify(this._positions) &&
@@ -64,15 +65,17 @@ class CustomLinePrimitive extends CustomPrimitive {
       this._primitive.update(frameState);
       return;
     }
+    //更新坐标点相关属性
     this._positions = [...this.positions];
     this._isGround = this.isGround;
     this._isHeight = this.isHeight;
     this._isTerrain = this.isTerrain;
 
+    //创建图元集合
     if (!this._primitive) {
       this._primitive = new Cesium.PrimitiveCollection();
     }
-
+    //绘制点
     if (this.isPoint) {
       this.getPointPrimitive({
         pointSize: this.pointSize,
@@ -82,9 +85,8 @@ class CustomLinePrimitive extends CustomPrimitive {
         pointOutlineWidth: this.pointOutlineWidth
       });
     }
-
+    //绘制线
     this._linePrimitive && this._primitive && this._primitive.remove(this._linePrimitive);
-    // this._linePrimitive = this._linePrimitive && this._linePrimitive.destroy();
     this._linePrimitive = this.getLinePrimitive({
       outline: true,
       outlineColor: this.color,
@@ -92,15 +94,15 @@ class CustomLinePrimitive extends CustomPrimitive {
       isClose: this.isClose,
       isDashed: this.isDashed
     });
-
+    //如果未添加则添加到集合
     if (this._linePrimitive && !this._primitive.contains(this._linePrimitive)) {
       this._primitive.add(this._linePrimitive);
     }
-
     if (this.isPoint && this._pointPrimitive) {
       if (!this._primitive.contains(this._pointPrimitive)) {
         this._primitive.add(this._pointPrimitive);
       }
+      //点集合置顶
       this._primitive.raiseToTop(this._pointPrimitive);
     }
     if (!this._primitive) return;
@@ -112,12 +114,8 @@ class CustomLinePrimitive extends CustomPrimitive {
     return false;
   }
   destroy() {
+    //清空集合
     this._primitive && this._primitive.removeAll();
-    // this._linePrimitive = this._linePrimitive && this._linePrimitive.destroy();
-    // if (this.isPoint) {
-    //   this._pointPrimitive =
-    //     this._pointPrimitive && this._pointPrimitive.destroy();
-    // }
     this._primitive = this._primitive && this._primitive.destroy();
     return Cesium.destroyObject(this);
   }

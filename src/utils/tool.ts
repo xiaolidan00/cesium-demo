@@ -5,7 +5,7 @@ export type GuiType =
       | { type: 'number'; min: number; max: number; step: number }
       | {
           type: 'select';
-          options: { [n: string | number]: number | string } | string[] | number[];
+          options: { [n: string | number]: number | string | boolean } | string[] | number[];
         }
       | { type: 'color' }
     ))

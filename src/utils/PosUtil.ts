@@ -163,6 +163,12 @@ export class PosUtil {
       }
     }
   }
+  static pickPos2D3DWGS84(c: Cesium.Cartesian2) {
+    const p = this.pickPos2D3D(c);
+    if (p) {
+      return this.Cartesian3ToWGS84(p);
+    }
+  }
   static pickTilePos(c: Cesium.Cartesian2) {
     if (this.viewer.scene.pick(c)) {
       let cartesian = this.viewer.scene.pickPosition(c);

@@ -13,6 +13,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^22.5.4",
+    "@types/three": "^0.168.0",
     "sass-embedded": "^1.79.2",
     "scss": "^0.2.4",
     "tslib": "^2.7.0",
@@ -25,6 +26,7 @@
   "dependencies": {
     "@turf/turf": "^7.1.0",
     "cesium": "1.121.1",
-    "lil-gui": "^0.19.2"
+    "lil-gui": "^0.19.2",
+    "three": "^0.168.0"
   }
 }

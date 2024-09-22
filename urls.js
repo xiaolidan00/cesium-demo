@@ -1,6 +1,6 @@
 const urls = [
   {
-    title: '绘制点线面',
+    title: '绘制折线和多边形',
     name: 'draw',
     show: true
   },
@@ -10,8 +10,8 @@ const urls = [
     show: true
   },
   {
-    title: '自定义Primitive绘制点线面',
-    name: 'draw',
+    title: '自定义Primitive绘制折线和多边形',
+    name: 'drawPrimitive',
     show: true
   },
   {
@@ -46,6 +46,10 @@ const urls = [
   {
     title: '距离面积计算',
     name: 'distanceArea'
+  },
+  {
+    title: 'three+cesium',
+    name: 'three'
   }
 ];
 const map = {};
