@@ -113,32 +113,31 @@ export class DynamicPrimitive {
   //地形是否开启时，更新自定义Primitive
   static updateTerrain(isTerrain: boolean) {
     this.isTerrain = isTerrain;
+    if (!this.lines.size && !this.polygons.size) return;
     const center = [0, 0, 0];
     let count = 0;
     this.lines.forEach((line) => {
       if (line.isGround) {
         line.isTerrain = isTerrain;
-
-        line.positions.forEach((it) => {
-          center[0] += it[0];
-          center[1] += it[1];
-          center[2] = Math.max(it[2], center[2]);
-          count++;
-        });
       }
+      line.positions.forEach((it) => {
+        center[0] += it[0];
+        center[1] += it[1];
+        center[2] = Math.max(it[2], center[2]);
+        count++;
+      });
     });
 
     this.polygons.forEach((polygon) => {
       if (polygon.isGround) {
         polygon.isTerrain = isTerrain;
-
-        polygon.positions.forEach((it) => {
-          center[0] += it[0];
-          center[1] += it[1];
-          center[2] = Math.max(it[2], center[2]);
-          count++;
-        });
       }
+      polygon.positions.forEach((it) => {
+        center[0] += it[0];
+        center[1] += it[1];
+        center[2] = Math.max(it[2], center[2]);
+        count++;
+      });
     });
     //视角适配到对应形状
     this.viewer.camera.lookAt(
