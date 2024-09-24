@@ -163,7 +163,18 @@ export class DynamicPrimitive {
     if (line) {
       const center = line.getCenter();
       this.viewer.camera.lookAt(
-        Cesium.Cartesian3.fromDegrees(center[0], center[1], center[2]),
+        Cesium.Cartesian3.fromDegrees(
+          center[0],
+          center[1] -
+            (PosUtil.is2D()
+              ? 0
+              : PosUtil.distanceToLat(
+                  Math.abs(
+                    Math.tan(Cesium.Math.toRadians(-50)) * center[2] * 0.5
+                  )
+                )),
+          center[2]
+        ),
         new Cesium.HeadingPitchRange(
           Cesium.Math.toRadians(0),
           Cesium.Math.toRadians(PosUtil.is2D() ? -90 : -50),
@@ -178,7 +189,18 @@ export class DynamicPrimitive {
     if (polygon) {
       const center = polygon.getCenter();
       this.viewer.camera.lookAt(
-        Cesium.Cartesian3.fromDegrees(center[0], center[1], center[2]),
+        Cesium.Cartesian3.fromDegrees(
+          center[0],
+          center[1] -
+            (PosUtil.is2D()
+              ? 0
+              : PosUtil.distanceToLat(
+                  Math.abs(
+                    Math.tan(Cesium.Math.toRadians(-50)) * center[2] * 0.5
+                  )
+                )),
+          center[2]
+        ),
         new Cesium.HeadingPitchRange(
           Cesium.Math.toRadians(0),
           Cesium.Math.toRadians(PosUtil.is2D() ? -90 : -50),

@@ -169,10 +169,10 @@ class CustomPrimitive {
     arr.forEach((it, idx) => {
       lng += it[0];
       lat += it[1];
-      const nx = arr[idx % arr.length];
-      distance = Cesium.Cartesian3.distance(
-        Cesium.Cartesian3.fromDegrees(it[0], it[1], it[2]),
-        Cesium.Cartesian3.fromDegrees(nx[0], nx[1], nx[2])
+      const nx = arr[(idx + 1) % arr.length];
+      distance = PosUtil.getEarthDistance(
+        Cesium.Cartographic.fromDegrees(it[0], it[1], it[2]),
+        Cesium.Cartographic.fromDegrees(nx[0], nx[1], nx[2])
       );
       h = Math.max(h, it[2], distance);
     });
