@@ -48,6 +48,10 @@ const urls = [
     name: 'distanceArea'
   },
   {
+    title: '卷帘分屏',
+    name: 'split'
+  },
+  {
     title: 'three+cesium',
     name: 'three'
   }

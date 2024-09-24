@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%- title %></title>
+    <script src="/node_modules/cesium/Build/Cesium/Cesium.js"></script>
+    <link href="/node_modules/cesium/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+
+    <style>
+      body,
+      #cesiumContainer {
+        margin: 0px;
+        padding: 0px;
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        top: 0px;
+        left: 0px;
+        overflow: hidden;
+      }
+      #slider {
+        position: absolute;
+        left: 50%;
+        top: 0px;
+        background-color: #d3d3d3;
+        width: 5px;
+        height: 100%;
+        z-index: 9999;
+      }
+
+      #slider:hover {
+        cursor: ew-resize;
+        background-color: dodgerblue;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cesiumContainer">
+      <div id="slider"></div>
+    </div>
+    <script src="index.ts" type="module"></script>
+  </body>
+</html>
