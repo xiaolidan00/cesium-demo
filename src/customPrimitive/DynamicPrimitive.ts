@@ -1,10 +1,12 @@
-import * as Cesium from 'cesium';
+import * as Cesium from "cesium";
 
-import CustomLinePrimitive, { type CustomLinePrimitiveOption } from './CustomLinePrimitive';
+import CustomLinePrimitive, {
+  type CustomLinePrimitiveOption,
+} from "./CustomLinePrimitive";
 import CustomPolygonPrimitive, {
-  type CustomPolygonPrimitiveOption
-} from './CustomPolygonPrimitive';
-import { PosUtil } from '../utils/PosUtil';
+  type CustomPolygonPrimitiveOption,
+} from "./CustomPolygonPrimitive";
+import { PosUtil } from "../utils/PosUtil";
 export type ColorArrType = [number, number, number, number];
 
 export class DynamicPrimitive {
@@ -30,7 +32,7 @@ export class DynamicPrimitive {
     for (let i = 0; i < positions.length; i++) {
       const a = positions[i];
       let height;
-      const id = [a[0], a[1]].join('_');
+      const id = [a[0], a[1]].join("_");
       const h = this.terrainPosMap.get(id);
       if (h !== undefined) {
         height = h;
@@ -49,7 +51,7 @@ export class DynamicPrimitive {
     }
     let p = new CustomPolygonPrimitive({
       ...set,
-      isTerrain: this.isTerrain
+      isTerrain: this.isTerrain,
     });
     this.group.add(p);
     this.polygons.set(set.id, p);
@@ -76,7 +78,7 @@ export class DynamicPrimitive {
     }
     let line = new CustomLinePrimitive({
       ...set,
-      isTerrain: this.isTerrain
+      isTerrain: this.isTerrain,
     });
     this.group.add(line);
     this.lines.set(set.id, line);
@@ -141,7 +143,11 @@ export class DynamicPrimitive {
     });
     //视角适配到对应形状
     this.viewer.camera.lookAt(
-      Cesium.Cartesian3.fromDegrees(center[0] / count, center[1] / count, center[2]),
+      Cesium.Cartesian3.fromDegrees(
+        center[0] / count,
+        center[1] / count,
+        center[2]
+      ),
       new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-90), 500)
     );
     this.viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
@@ -151,5 +157,35 @@ export class DynamicPrimitive {
   }
   static getPolygon(id: string) {
     return this.polygons.get(id);
+  }
+  static viewLine(id: string) {
+    const line = DynamicPrimitive.getLine(id);
+    if (line) {
+      const center = line.getCenter();
+      this.viewer.camera.lookAt(
+        Cesium.Cartesian3.fromDegrees(center[0], center[1], center[2]),
+        new Cesium.HeadingPitchRange(
+          Cesium.Math.toRadians(0),
+          Cesium.Math.toRadians(PosUtil.is2D() ? -90 : -50),
+          center[2]
+        )
+      );
+      this.viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+    }
+  }
+  static viewPolygon(id: string) {
+    const polygon = DynamicPrimitive.getPolygon(id);
+    if (polygon) {
+      const center = polygon.getCenter();
+      this.viewer.camera.lookAt(
+        Cesium.Cartesian3.fromDegrees(center[0], center[1], center[2]),
+        new Cesium.HeadingPitchRange(
+          Cesium.Math.toRadians(0),
+          Cesium.Math.toRadians(PosUtil.is2D() ? -90 : -50),
+          center[2]
+        )
+      );
+      this.viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+    }
   }
 }
