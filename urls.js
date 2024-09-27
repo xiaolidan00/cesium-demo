@@ -60,6 +60,10 @@ const urls = [
     name: 'cluster'
   },
   {
+    title: '2D3D切换',
+    name: '2D3D'
+  },
+  {
     title: 'three+cesium',
     name: 'three'
   }

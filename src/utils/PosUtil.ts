@@ -1,4 +1,4 @@
-import * as Cesium from "cesium";
+import * as Cesium from 'cesium';
 
 export type LngLatHeightType = [number, number, number];
 //地球半径 单位m
@@ -6,6 +6,7 @@ const EARTH_RADIUS = 6378137;
 export class PosUtil {
   static viewer: Cesium.Viewer;
   static terrainProvider: Cesium.CesiumTerrainProvider;
+  static beforeCenter: LngLatHeightType | undefined;
   static posNoHeightTransform(positions: number[][]): number[][] {
     return positions.map((it) => [it[0], it[1]]);
   }
@@ -13,10 +14,7 @@ export class PosUtil {
     return positions.map((it) => [it[0], it[1], it[2] || 0]);
   }
   static Cartesian3ToCartesian2(c: Cesium.Cartesian3) {
-    return this.viewer.scene.cartesianToCanvasCoordinates(
-      c,
-      new Cesium.Cartesian2()
-    );
+    return this.viewer.scene.cartesianToCanvasCoordinates(c, new Cesium.Cartesian2());
   }
   static Cartesian3ToCartographic(c: Cesium.Cartesian3) {
     return Cesium.Cartographic.fromCartesian(c);
@@ -25,11 +23,7 @@ export class PosUtil {
     return Cesium.Cartesian3.fromRadians(c.longitude, c.latitude, c.height);
   }
   static CartographicToWGS84(c: Cesium.Cartographic): LngLatHeightType {
-    return [
-      Cesium.Math.toDegrees(c.longitude),
-      Cesium.Math.toDegrees(c.latitude),
-      c.height,
-    ];
+    return [Cesium.Math.toDegrees(c.longitude), Cesium.Math.toDegrees(c.latitude), c.height];
   }
   static Cartesian3ToWGS84(c: Cesium.Cartesian3): LngLatHeightType {
     const c1 = this.Cartesian3ToCartographic(c);
@@ -84,7 +78,7 @@ export class PosUtil {
   static getLngLatTerrainHeight(lng: number, lat: number) {
     return new Promise<number>((resolve) => {
       Cesium.sampleTerrainMostDetailed(this.terrainProvider, [
-        Cesium.Cartographic.fromDegrees(lng, lat),
+        Cesium.Cartographic.fromDegrees(lng, lat)
       ]).then((pos: Cesium.Cartographic[]) => {
         if (pos?.length) {
           resolve(pos[0].height);
@@ -97,7 +91,7 @@ export class PosUtil {
   static pickPosTerrainHeight(c: Cesium.Cartographic) {
     return new Promise<number>((resolve) => {
       Cesium.sampleTerrainMostDetailed(this.terrainProvider, [
-        new Cesium.Cartographic(c.longitude, c.latitude),
+        new Cesium.Cartographic(c.longitude, c.latitude)
       ]).then((pos: Cesium.Cartographic[]) => {
         if (pos?.length) {
           resolve(pos[0].height);
@@ -122,6 +116,7 @@ export class PosUtil {
   static is2D() {
     return this.viewer.scene.mode === Cesium.SceneMode.SCENE2D;
   }
+
   static getViewBoundary() {
     const rect = this.viewer.camera.computeViewRectangle();
     if (rect)
@@ -130,19 +125,12 @@ export class PosUtil {
         right: Cesium.Math.toDegrees(rect.west),
 
         bottom: Cesium.Math.toDegrees(rect.south),
-        top: Cesium.Math.toDegrees(rect.north),
+        top: Cesium.Math.toDegrees(rect.north)
       };
   }
   static pickPos2D3D(c: Cesium.Cartesian2) {
     if (this.is2D()) {
-      let cartesian;
-      const ray = this.viewer.camera.getPickRay(c);
-      if (ray) {
-        cartesian = this.viewer.scene.globe.pick(ray, this.viewer.scene);
-        if (Cesium.defined(cartesian)) {
-          return cartesian;
-        }
-      }
+      return this.pickGlobe(c);
     } else {
       const rect = this.getViewBoundary();
       if (!rect) return;
@@ -161,13 +149,36 @@ export class PosUtil {
           return cartesian;
         }
       }
-      const ray = this.viewer.camera.getPickRay(c);
-      if (ray) {
-        cartesian = this.viewer.scene.globe.pick(ray, this.viewer.scene);
-        if (Cesium.defined(cartesian)) {
-          return cartesian;
-        }
+      return this.pickGlobe(c);
+    }
+  }
+  static pickGlobe(c: Cesium.Cartesian2) {
+    const ray = this.viewer.camera.getPickRay(c);
+    if (ray) {
+      const cartesian = this.viewer.scene.globe.pick(ray, this.viewer.scene);
+      if (Cesium.defined(cartesian)) {
+        return cartesian;
       }
+    }
+  }
+  static pickGlobeWGS84(c: Cesium.Cartesian2) {
+    const pos = this.pickGlobe(c);
+    if (Cesium.defined(pos)) {
+      return this.Cartesian3ToWGS84(pos);
+    }
+  }
+
+  static getMapCenter() {
+    const center = this.pickGlobeWGS84(
+      new Cesium.Cartesian2(this.viewer.canvas.width * 0.5, this.viewer.canvas.height * 0.5)
+    );
+    if (center && Cesium.defined(center)) {
+      center[2] = this.viewer.camera.positionCartographic.height;
+      this.beforeCenter = center;
+      return center;
+    } else if (this.beforeCenter) {
+      // console.log('beforeCenter', this.beforeCenter);
+      return this.beforeCenter;
     }
   }
   static pickPos2D3DWGS84(c: Cesium.Cartesian2) {
@@ -215,10 +226,7 @@ export class PosUtil {
       }
     }
 
-    cartesian = this.viewer.scene.camera.pickEllipsoid(
-      c,
-      this.viewer.scene.globe.ellipsoid
-    );
+    cartesian = this.viewer.scene.camera.pickEllipsoid(c, this.viewer.scene.globe.ellipsoid);
     if (Cesium.defined(cartesian)) {
       return cartesian;
     }
