@@ -64,6 +64,7 @@ class CustomPrimitive {
       color: that.pointColor,
       outlineColor: that.pointOutline ? that.pointOutlineColor : undefined,
       outlineWidth: that.pointOutline ? that.pointOutlineWidth : 0.0,
+      disableDepthTestDistance: Number.POSITIVE_INFINITY,
     };
     const baseHeight = 0.0;
     //贴地
