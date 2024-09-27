@@ -56,6 +56,10 @@ const urls = [
     name: 'selectOutline'
   },
   {
+    title: '聚类',
+    name: 'cluster'
+  },
+  {
     title: 'three+cesium',
     name: 'three'
   }
