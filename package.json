@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@turf/turf": "^7.1.0",
     "@types/node": "^22.5.4",
     "@types/three": "^0.168.0",
     "sass-embedded": "^1.79.2",
@@ -24,7 +25,6 @@
     "vite-plugin-html": "^3.2.2"
   },
   "dependencies": {
-    "@turf/turf": "^7.1.0",
     "cesium": "1.121.1",
     "lil-gui": "^0.19.2",
     "three": "^0.168.0"

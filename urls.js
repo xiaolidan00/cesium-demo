@@ -48,8 +48,12 @@ const urls = [
     name: 'distanceArea'
   },
   {
-    title: '卷帘分屏',
+    title: '分屏',
     name: 'split'
+  },
+  {
+    title: '选择轮廓',
+    name: 'selectOutline'
   },
   {
     title: 'three+cesium',

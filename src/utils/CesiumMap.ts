@@ -15,7 +15,7 @@ export type OrientType = {
 export class CesiumMap {
   viewer: Cesium.Viewer;
   isFirst: boolean = true;
-
+  isArcGISBaseLayer = false;
   constructor(containerId: string) {
     //暗色底图
     // const nightLayer=new Cesium.ImageryLayer.fromProviderAsync(
@@ -24,11 +24,13 @@ export class CesiumMap {
     // const dayLayer=Cesium.ImageryLayer.fromProviderAsync(
     //   Cesium.IonImageryProvider.fromAssetId(3845)
     // );
-    const imageryProvider = new Cesium.UrlTemplateImageryProvider({
-      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      subdomains: ['0', '1', '2', '3'],
-      tilingScheme: new Cesium.WebMercatorTilingScheme()
-    });
+    const imageryProvider = this.isArcGISBaseLayer
+      ? new Cesium.UrlTemplateImageryProvider({
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+          subdomains: ['0', '1', '2', '3'],
+          tilingScheme: new Cesium.WebMercatorTilingScheme()
+        })
+      : undefined;
 
     const viewer = new Cesium.Viewer(containerId, {
       animation: false, // 左下角动画小组件
@@ -53,11 +55,12 @@ export class CesiumMap {
       //   }),
       //阴影
       // shadows: true,
-      baseLayer: new Cesium.ImageryLayer(imageryProvider)
+      baseLayer: this.isArcGISBaseLayer ? new Cesium.ImageryLayer(imageryProvider) : undefined
     });
+
     //Cesium的logo
     (viewer.cesiumWidget.creditContainer as HTMLElement).style.display = 'none';
-    // viewer.scene.globe.depthTestAgainstTerrain = true; //地面以下不可见（高程遮挡） 会导致图标被地面覆盖问题
+    viewer.scene.globe.depthTestAgainstTerrain = true; //深度检测
     viewer.scene.globe.translucency.enabled = true;
 
     viewer.scene.postProcessStages.fxaa.enabled = true;
