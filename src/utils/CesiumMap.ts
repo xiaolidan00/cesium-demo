@@ -61,16 +61,9 @@ export class CesiumMap {
     //Cesium的logo
     (viewer.cesiumWidget.creditContainer as HTMLElement).style.display = 'none';
     viewer.scene.globe.depthTestAgainstTerrain = true; //深度检测
-    viewer.scene.globe.translucency.enabled = true;
+    viewer.scene.globe.translucency.enabled = true; //开启球体透明度
+    viewer.scene.postProcessStages.fxaa.enabled = true; //抗锯齿
 
-    viewer.scene.postProcessStages.fxaa.enabled = true;
-    viewer.scene.globe.preloadAncestors = false;
-    viewer.scene.globe.preloadSiblings = true;
-    viewer.scene.globe.tileCacheSize = 1000;
-    viewer.scene.globe.maximumScreenSpaceError = 2;
-    viewer.scene.screenSpaceCameraController.inertiaTranslate = 0.3; //移动的阻尼值
-    viewer.scene.screenSpaceCameraController.inertiaZoom = 0.5; //缩放的阻尼值
-    viewer.scene.screenSpaceCameraController.inertiaSpin = 0.1; //旋转的阻尼值
     viewer.scene.screenSpaceCameraController.enableCollisionDetection = false; //禁止模型穿透
 
     viewer.scene.screenSpaceCameraController.tiltEventTypes = [
