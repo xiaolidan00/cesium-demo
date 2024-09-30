@@ -27,6 +27,7 @@
   "dependencies": {
     "cesium": "1.121.1",
     "lil-gui": "^0.19.2",
-    "three": "^0.168.0"
+    "three": "^0.168.0",
+    "xcolor-helper": "^1.0.2"
   }
 }

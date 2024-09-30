@@ -1,0 +1,15 @@
+.cesium-label-overlay {
+  box-sizing: border-box;
+  --cesium-label-overlay-borderradius: 50%;
+  --cesium-label-overlay-bg: red;
+  --cesium-label-overlay-color: white;
+  --cesium-label-overlay-border: solid 2px white;
+  box-shadow: 0 0 10px var(--cesium-label-overlay-bg);
+  border: var(--cesium-label-overlay-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cesium-label-overlay-bg);
+  color: var(--cesium-label-overlay-color);
+  border-radius: var(--cesium-label-overlay-borderradius);
+}

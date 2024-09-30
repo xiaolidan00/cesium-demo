@@ -1,0 +1,93 @@
+.cesium-info-overlay {
+  --cesium-info-overlay-borderradius: 6px;
+  --cesium-info-overlay-header-height: 34px;
+  --cesium-info-overlay-header-bg: red;
+  --cesium-info-overlay-header-fontsize: 16px;
+  --cesium-info-overlay-header-color: white;
+  --cesium-info-overlay-body-bg: rgba(0, 0, 0, 0.5);
+  --cesium-info-overlay-body-fontsize: 14px;
+  --cesium-info-overlay-body-color: rgba(255, 255, 255, 0.7);
+  --cesium-info-overlay-body-height: 28px;
+  --cesium-info-overlay-close-color: white;
+  --cesium-info-overlay-close-bg: rgba(255, 255, 255, 0.2);
+  --cesium-info-overlay-close-radius: 3px;
+  --cesium-info-overlay-close-height: 24px;
+  --cesium-info-overlay-close-width: 24px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+
+  * {
+    box-sizing: border-box;
+  }
+  > .header {
+    background: linear-gradient(
+        to right,
+        var(--cesium-info-overlay-header-bg),
+        var(--cesium-info-overlay-header-bg1)
+      ),
+      black;
+    border-radius: var(--cesium-info-overlay-borderradius) var(--cesium-info-overlay-borderradius) 0
+      0;
+    padding: 0 10px;
+    height: 32px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    > .title {
+      font-size: var(--cesium-info-overlay-header-fontsize);
+      color: var(--cesium-info-overlay-header-color);
+      flex: 1;
+      display: inline-block;
+    }
+    > .close {
+      height: var(--cesium-info-overlay-close-height);
+      width: var(--cesium-info-overlay-close-width);
+      border-radius: var(--cesium-info-overlay-close-radius);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cesium-info-overlay-close-color);
+      background: var(--cesium-info-overlay-close-bg);
+      > i {
+        display: inline-block;
+        height: 16px;
+        width: 16px;
+        content: url(./close.svg);
+      }
+    }
+  }
+  > .body {
+    padding: 0 10px;
+    flex: 1;
+    background: var(--cesium-info-overlay-body-bg);
+    font-size: var(--cesium-info-overlay-body-fontsize);
+    color: var(--cesium-info-overlay-body-color);
+    line-height: var(--cesium-info-overlay-body-height);
+    border-radius: 0 0 var(--cesium-info-overlay-borderradius)
+      var(--cesium-info-overlay-borderradius);
+    > table {
+      width: 100%;
+      border-spacing: 0px;
+      border-collapse: collapse;
+    }
+  }
+  > .arrow {
+    display: block;
+    text-align: center;
+    position: relative;
+    top: -9px;
+    &::after {
+      height: 16px;
+      width: 16px;
+      display: inline-block;
+      content: '';
+      transform: rotate(45deg);
+      background: linear-gradient(
+        to left top,
+        var(--cesium-info-overlay-body-bg) 50%,
+        transparent 50%
+      );
+    }
+  }
+}

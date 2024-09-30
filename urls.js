@@ -64,6 +64,10 @@ const urls = [
     name: '2D3D'
   },
   {
+    title: 'HTML信息框',
+    name: 'htmlOverlay'
+  },
+  {
     title: 'three+cesium',
     name: 'three'
   }

@@ -93,7 +93,9 @@ export class CesiumMap {
       if (ev <= 10 && this.isFirst) {
         console.log('底图加载完毕');
         this.isFirst = false;
-        this.init();
+        setTimeout(() => {
+          this.init();
+        }, 1000);
       }
     });
   }

@@ -17,6 +17,9 @@ importers:
       three:
         specifier: ^0.168.0
         version: 0.168.0
+      xcolor-helper:
+        specifier: ^1.0.2
+        version: 1.0.2
     devDependencies:
       '@turf/turf':
         specifier: ^7.1.0
@@ -1497,6 +1500,9 @@ packages:
         optional: true
       terser:
         optional: true
+
+  xcolor-helper@1.0.2:
+    resolution: {integrity: sha512-dNHgwRnvLOUNaxkmtUSua4zvDe5U1iaJmmH3Y8wAIz8wf//Ka9277zrThg77UVXHXyuf7rTsF13nlVXbGykwWA==}
 
 snapshots:
 
@@ -3579,3 +3585,5 @@ snapshots:
       fsevents: 2.3.3
       sass-embedded: 1.79.2
       terser: 5.32.0
+
+  xcolor-helper@1.0.2: {}
