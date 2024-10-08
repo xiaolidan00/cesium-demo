@@ -39,7 +39,7 @@ class MyCesiumMap extends CesiumMap {
             (PosUtil.is2D()
               ? 0
               : PosUtil.distanceToLat(
-                  height / Math.abs(Math.tan(Cesium.Math.toRadians(Math.abs(orient.pitch))))
+                  (0.5 * height) / Math.abs(Math.tan(Cesium.Math.toRadians(Math.abs(orient.pitch))))
                 )),
           height
         ),
@@ -74,7 +74,7 @@ class MyCesiumMap extends CesiumMap {
       {
         heading: 0,
         roll: 0,
-        pitch: -45
+        pitch: -53
       },
       true
     );
