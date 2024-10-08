@@ -109,6 +109,50 @@ class MyCesiumMap extends CesiumMap {
       }
     });
     this.viewer.scene.primitives.add(pr);
+
+    const pr1 = new CustomInfoPrimitive({
+      viewer: this.viewer,
+      id: 'test1',
+      terrainHeight: 400,
+      position: [113, 30.05, 800],
+      colorListStyle: colorStyle,
+      lineStyle: {
+        width: 3,
+        color: Cesium.Color.BLUE,
+        // startPos: [113, 30, 0],
+        // endPos: [113, 30, 500],
+        isGround: true
+      },
+      locaStyle: {
+        height: 30,
+        width: 30,
+        iconType: 'icon1'
+      },
+
+      data: {
+        lat: 30,
+        lng: 39,
+        height: 800
+      },
+      hideLevel: 1,
+      labelStyle: {
+        imageUrl: 'location.svg',
+        width: 30,
+        height: 30
+      },
+      infoStyle: {
+        hideLevel: 14,
+        width: 300,
+        height: 300,
+        title: '标题',
+        info: [
+          { name: '经度', prop: 'lng', unit: '度' },
+          { name: '纬度', prop: 'lat', unit: '度' },
+          { name: '高度', prop: 'height', unit: '米' }
+        ]
+      }
+    });
+    this.viewer.scene.primitives.add(pr1);
     createGui(
       [
         { type: 'select', name: 'actions', options: ['无', ''] },

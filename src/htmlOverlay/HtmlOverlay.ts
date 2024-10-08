@@ -106,6 +106,7 @@ export class HtmlOverlay {
         }
       }
     } catch (error) {
+      console.log('updatePos', error);
       item.dom.style.display = 'none';
     }
   }

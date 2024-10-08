@@ -98,7 +98,7 @@ export class CustomInfoPrimitive {
     if (!options.id) {
       options.id = uuid();
     }
-    options.id = this.id;
+    this.id = options.id;
     this.hideLevel = options.hideLevel;
     this.viewer = options.viewer;
     this.colorListStyle = options.colorListStyle;
