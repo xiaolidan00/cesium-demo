@@ -39,7 +39,7 @@ class MyCesiumMap extends CesiumMap {
             (PosUtil.is2D()
               ? 0
               : PosUtil.distanceToLat(
-                  height / Math.tan(Cesium.Math.toRadians(Math.abs(orient.pitch)))
+                  height / Math.abs(Math.tan(Cesium.Math.toRadians(Math.abs(orient.pitch))))
                 )),
           height
         ),
@@ -89,6 +89,7 @@ class MyCesiumMap extends CesiumMap {
     hander.setInputAction(this.updateMapCenter.bind(this), Cesium.ScreenSpaceEventType.WHEEL);
     hander.setInputAction(this.updateMapCenter.bind(this), Cesium.ScreenSpaceEventType.RIGHT_DOWN);
     hander.setInputAction(this.updateMapCenter.bind(this), Cesium.ScreenSpaceEventType.LEFT_DOWN);
+    let center = [113, 30, 1000];
     createGui(
       [
         {
@@ -96,13 +97,13 @@ class MyCesiumMap extends CesiumMap {
           type: 'select',
           options: ['3D', '2D'],
           onChange: (value) => {
-            let center;
-            if (!this.center2D3D) {
-              center = PosUtil.getMapCenter();
-              this.center2D3D = center;
-            } else {
-              center = this.center2D3D;
-            }
+            // let center;
+            // if (!this.center2D3D) {
+            //   center = PosUtil.getMapCenter();
+            //   this.center2D3D = center;
+            // } else {
+            //   center = this.center2D3D;
+            // }
             console.log('🚀 ~ file: index.ts:92 ~ MyCesiumMap ~ init ~ value:', value, center);
             if (value === '3D') {
               this.viewer.scene.morphTo3D(0);
@@ -113,7 +114,7 @@ class MyCesiumMap extends CesiumMap {
                     lat: center[1],
                     height: center[2]
                   },
-                  { heading: 0, pitch: -45, roll: 0 },
+                  { heading: 0, pitch: -53, roll: 0 },
                   true
                 );
             } else {
