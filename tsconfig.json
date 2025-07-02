@@ -14,10 +14,12 @@
     "skipLibCheck": true,
     "declaration": true,
     "noImplicitThis": false,
+    "allowJs": true,
     "jsx": "preserve",
-    "lib": ["ESNext", "DOM"]
+    "lib": ["ESNext", "DOM"],
+    "typeRoots": ["node_modules/@types", "src/@types"]
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "getPage.js", "type.d.ts"],
-  "exclude": ["src/**/*.stories.ts", "src/examples/", "src/**/*.test.ts"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["src/**/*.ts", "src/**/*.d.ts"],
+
+  "references": [{"path": "./tsconfig.node.json"}]
 }

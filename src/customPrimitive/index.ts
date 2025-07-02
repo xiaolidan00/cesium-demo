@@ -1,14 +1,14 @@
-import * as Cesium from 'cesium';
+import * as Cesium from "cesium";
 
-import { EventBus, useEventBus } from '../utils/EventBus';
+import {EventBus, useEventBus} from "../utils/EventBus";
 
-import { CesiumMap } from '../utils/CesiumMap';
-import { DynamicPrimitive } from './DynamicPrimitive';
-import { PosUtil } from '../utils/PosUtil';
+import {CesiumMap} from "../utils/CesiumMap";
+import {DynamicPrimitive} from "./DynamicPrimitive";
+import {PosUtil} from "../utils/PosUtil";
 
 class MyCesiumMap extends CesiumMap {
   isTerrain = true;
-  terrainChangeEvent = 'terrainChangeEvent';
+  terrainChangeEvent = "terrainChangeEvent";
   terrainProvider: Cesium.CesiumTerrainProvider | undefined;
   constructor(containerId: string) {
     super(containerId);
@@ -27,10 +27,10 @@ class MyCesiumMap extends CesiumMap {
   }
   async init() {
     const terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(
-      'https://data.marsgis.cn/terrain',
-      {
-        requestVertexNormals: true
-      }
+      "https://data.marsgis.cn/terrain"
+      // {
+      //   requestVertexNormals: true
+      // }
     );
     this.terrainProvider = terrainProvider;
     PosUtil.terrainProvider = terrainProvider;
@@ -39,11 +39,11 @@ class MyCesiumMap extends CesiumMap {
       setTimeout(() => {
         DynamicPrimitive.updateTerrain(this.viewer.terrainProvider === this.terrainProvider);
       }, 100);
-      console.log('%c地形改变', 'background:yellow', ev);
+      console.log("%c地形改变", "background:yellow", ev);
     });
 
     const polygon = DynamicPrimitive.addPolygon({
-      id: 'aaa',
+      id: "aaa",
       positions: [
         [113, 39],
         [113.002, 39],
@@ -58,7 +58,7 @@ class MyCesiumMap extends CesiumMap {
     });
 
     const line = DynamicPrimitive.addPolyline({
-      id: 'bbb',
+      id: "bbb",
       positions: [
         [113.004, 39],
         [113.006, 39],
@@ -70,33 +70,33 @@ class MyCesiumMap extends CesiumMap {
       isPoint: true
     });
 
-    this.addBtnAction('btn1', () => {
-      DynamicPrimitive.updatePolygonPos('aaa', [
+    this.addBtnAction("btn1", () => {
+      DynamicPrimitive.updatePolygonPos("aaa", [
         [113, 39],
         [113.002, 39],
         [113.002, 39.002],
         [113.003, 39.002]
       ]);
-      DynamicPrimitive.updatePolylinePos('bbb', [
+      DynamicPrimitive.updatePolylinePos("bbb", [
         [113.004, 39],
         [113.006, 39]
       ]);
     });
-    this.addBtnAction('btn2', () => {
+    this.addBtnAction("btn2", () => {
       this.viewer.terrainProvider = terrainProvider;
 
       this.isTerrain = true;
     });
 
-    this.addBtnAction('btn3', () => {
+    this.addBtnAction("btn3", () => {
       this.viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider();
 
       this.isTerrain = false;
     });
 
-    this.addBtnAction('btn4', () => {
-      DynamicPrimitive.removePolygon('aaa');
-      DynamicPrimitive.removePolyline('bbb');
+    this.addBtnAction("btn4", () => {
+      DynamicPrimitive.removePolygon("aaa");
+      DynamicPrimitive.removePolyline("bbb");
     });
   }
   addBtnAction(id: string, callback: Function) {
@@ -109,5 +109,5 @@ class MyCesiumMap extends CesiumMap {
   }
 }
 
-const cesiumMap = new MyCesiumMap('cesiumContainer');
+const cesiumMap = new MyCesiumMap("cesiumContainer");
 window.cesiumMap = cesiumMap;

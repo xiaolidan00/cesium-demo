@@ -3,44 +3,91 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cesium-Demo</title>
+    <title>Document</title>
     <style>
-      body {
-        margin: 0px;
-        padding: 0px;
+      * {
+        box-sizing: border-box;
+      }
+      .container {
         position: absolute;
-        height: 100%;
-        width: 100%;
         top: 0px;
         left: 0px;
-        overflow: auto;
-        text-align: center;
+        height: 100%;
+        width: 100%;
+        background-color: dodgerblue;
+        padding: 20px 20px 20px 0;
+        display: flex;
       }
-      #content {
+      .left-nav {
+        width: 300px;
+        padding-right: 20px;
+        height: 100%;
         display: inline-block;
-        width: 800px;
-        margin: 0 auto;
-        padding: 20px 0;
-        text-align: left;
+        overflow: hidden auto;
+      }
+      .left-nav > div {
+        height: 40px;
+        display: flex;
+        align-items: center;
+        color: gray;
+
+        cursor: pointer;
+        border-radius: 0 20px 20px 0px;
+        background-color: white;
+        padding: 0 20px;
+      }
+      .left-nav > div > img {
+        display: none;
+        height: 16px;
+        width: 16px;
+      }
+      .left-nav > div:hover > img {
+        display: inline-block;
+      }
+      .left-nav > div > span {
+        display: inline-block;
+        flex: 1;
+        height: 100%;
+        line-height: 40px;
+      }
+      .left-nav > div:not(:last-child) {
+        margin-bottom: 10px;
+      }
+      .left-nav > div.active {
+        color: dodgerblue;
+        font-weight: bold;
+      }
+      .right-content {
+        height: 100%;
+        width: calc(100% - 300px);
+        border-radius: 20px;
+        background-color: white;
+        display: inline-block;
+        padding: 20px;
+      }
+      iframe {
+        height: 100%;
+        width: 100%;
+        border: none;
+      }
+      ::-webkit-scrollbar {
+        background-color: transparent;
+        height: 8px;
+        width: 8px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 4px;
       }
     </style>
   </head>
   <body>
-    <div id="content"></div>
-    <script type="module">
-      import urls from './urls.js';
-      console.log(urls);
-
-      const content = urls.urls
-        .map((item, idx) =>
-          item.show
-            ? `<h1>${idx + 1}.${item.title}</h1><p>访问地址：<a href="src/${
-                item.name
-              }/index.html">src/${item.name}/index.html</a></p>`
-            : ''
-        )
-        .join('');
-      document.getElementById('content').innerHTML = content;
-    </script>
+    <div class="container">
+      <div class="left-nav" id="nav"></div>
+      <div class="right-content">
+        <iframe id="app"></iframe>
+      </div>
+    </div>
+    <script type="module" src="index.ts"></script>
   </body>
 </html>

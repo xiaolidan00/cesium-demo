@@ -1,6 +1,6 @@
-import * as Cesium from 'cesium';
+import * as Cesium from "cesium";
 
-import { PosUtil } from './PosUtil';
+import {PosUtil} from "./PosUtil";
 
 export type PosType = {
   lng: number;
@@ -17,6 +17,8 @@ export class CesiumMap {
   isFirst: boolean = true;
   isArcGISBaseLayer = false;
   constructor(containerId: string) {
+    Cesium.Ion.defaultAccessToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxZWJhYjFkOC0yNGY2LTRmODQtOWQ0My1mMWM3MDRmN2Q1ODYiLCJpZCI6MjQzMTI1LCJpYXQiOjE3MjY5MzAyMzZ9.4pVeKaBrgjyFV8BHM4debskrOnZH0iBezZV2ysj5KCI";
     //暗色底图
     // const nightLayer=new Cesium.ImageryLayer.fromProviderAsync(
     //   Cesium.IonImageryProvider.fromAssetId(3812)
@@ -26,8 +28,8 @@ export class CesiumMap {
     // );
     const imageryProvider = this.isArcGISBaseLayer
       ? new Cesium.UrlTemplateImageryProvider({
-          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-          subdomains: ['0', '1', '2', '3'],
+          url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          subdomains: ["0", "1", "2", "3"],
           tilingScheme: new Cesium.WebMercatorTilingScheme()
         })
       : undefined;
@@ -59,7 +61,7 @@ export class CesiumMap {
     });
 
     //Cesium的logo
-    (viewer.cesiumWidget.creditContainer as HTMLElement).style.display = 'none';
+    (viewer.cesiumWidget.creditContainer as HTMLElement).style.display = "none";
     viewer.scene.globe.depthTestAgainstTerrain = true; //深度检测
     viewer.scene.globe.translucency.enabled = true; //开启球体透明度
     viewer.scene.postProcessStages.fxaa.enabled = true; //抗锯齿
@@ -91,7 +93,7 @@ export class CesiumMap {
 
     viewer.scene.globe.tileLoadProgressEvent.addEventListener((ev) => {
       if (ev <= 10 && this.isFirst) {
-        console.log('底图加载完毕');
+        console.log("底图加载完毕");
         this.isFirst = false;
         setTimeout(() => {
           this.init();
