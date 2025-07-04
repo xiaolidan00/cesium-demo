@@ -100,9 +100,12 @@ export class CesiumMap {
         }, 1000);
       }
     });
+    window.addEventListener("unload", this.destroy.bind(this));
   }
   init() {}
   destroy() {
+    this.viewer.entities.removeAll();
+    this.viewer.scene.primitives.removeAll();
     this.viewer.destroy();
   }
 

@@ -1,4 +1,4 @@
-import * as Cesium from 'cesium';
+import * as Cesium from "cesium";
 
 export type LngLatHeightType = [number, number, number];
 //地球半径 单位m
@@ -77,28 +77,28 @@ export class PosUtil {
   }
   static getLngLatTerrainHeight(lng: number, lat: number) {
     return new Promise<number>((resolve) => {
-      Cesium.sampleTerrainMostDetailed(this.terrainProvider, [
-        Cesium.Cartographic.fromDegrees(lng, lat)
-      ]).then((pos: Cesium.Cartographic[]) => {
-        if (pos?.length) {
-          resolve(pos[0].height);
-        } else {
-          resolve(0);
+      Cesium.sampleTerrainMostDetailed(this.terrainProvider, [Cesium.Cartographic.fromDegrees(lng, lat)]).then(
+        (pos: Cesium.Cartographic[]) => {
+          if (pos?.length) {
+            resolve(pos[0].height);
+          } else {
+            resolve(0);
+          }
         }
-      });
+      );
     });
   }
   static pickPosTerrainHeight(c: Cesium.Cartographic) {
     return new Promise<number>((resolve) => {
-      Cesium.sampleTerrainMostDetailed(this.terrainProvider, [
-        new Cesium.Cartographic(c.longitude, c.latitude)
-      ]).then((pos: Cesium.Cartographic[]) => {
-        if (pos?.length) {
-          resolve(pos[0].height);
-        } else {
-          resolve(0);
+      Cesium.sampleTerrainMostDetailed(this.terrainProvider, [new Cesium.Cartographic(c.longitude, c.latitude)]).then(
+        (pos: Cesium.Cartographic[]) => {
+          if (pos?.length) {
+            resolve(pos[0].height);
+          } else {
+            resolve(0);
+          }
         }
-      });
+      );
     });
   }
   static pickTilePosWGS84(c: Cesium.Cartesian2) {
@@ -270,10 +270,7 @@ export class PosUtil {
     let s =
       2 *
       Math.asin(
-        Math.sqrt(
-          Math.pow(Math.sin(a / 2), 2) +
-            Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(b / 2), 2)
-        )
+        Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(b / 2), 2))
       );
     // 弧长乘地球半径, 返回单位: 米
     s = s * EARTH_RADIUS;
@@ -287,5 +284,11 @@ export class PosUtil {
   //距离单位米，距离转经度
   static distanceToLng(d: number) {
     return Number(((d / 1.1132) * 0.00001).toFixed(6));
+  }
+  static heightToLevel(h: number) {
+    return Math.log2(128538232 / h);
+  }
+  static levelToHeight(level: number) {
+    return 128538232 / Math.pow(2, level);
   }
 }
