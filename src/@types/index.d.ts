@@ -1,4 +1,4 @@
-declare module "*.glsl" {
+declare module '*.glsl' {
   const content: string;
   export default content;
 }
@@ -7,3 +7,5 @@ declare global {
     cesiumMap: any;
   }
 }
+
+declare module '*.png';

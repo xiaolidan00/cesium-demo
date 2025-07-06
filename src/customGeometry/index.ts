@@ -1,7 +1,7 @@
-import * as Cesium from "cesium";
-import image from "../assets/logo.png";
-import {CesiumMap} from "../utils/CesiumMap";
-
+import * as Cesium from 'cesium';
+import image from '../assets/logo.png';
+import { CesiumMap } from '../utils/CesiumMap';
+import materialGlsl from './material.glsl';
 class PlaneGeometry {
   _workerName: string;
   lnglat: [number, number];
@@ -21,7 +21,7 @@ class PlaneGeometry {
     this.lnglat1 = lnglat1;
     this.widthSegments = widthSegments;
     this.heightSegments = heightSegments;
-    this._workerName = "createPlaneGeometry";
+    this._workerName = 'createPlaneGeometry';
   }
   getPlaneGeometry(
     lnglat: [number, number],
@@ -64,7 +64,11 @@ class PlaneGeometry {
       for (let ix = 0; ix < gridX1; ix++) {
         const x = ix * segment_width - width_half;
 
-        const pos = Cesium.Cartesian3.fromDegrees(x * sizelng + minlng, -y * sizelat + minlat, height3D);
+        const pos = Cesium.Cartesian3.fromDegrees(
+          x * sizelng + minlng,
+          -y * sizelat + minlat,
+          height3D
+        );
         vertices.push(pos.x, pos.y, pos.z);
 
         normals.push(0, 0, 1);
@@ -85,10 +89,10 @@ class PlaneGeometry {
         indices.push(b, c, d);
       }
     }
-    return {vertices, uvs, indices};
+    return { vertices, uvs, indices };
   }
   createGeometry() {
-    const {vertices, uvs, indices} = this.getPlaneGeometry(
+    const { vertices, uvs, indices } = this.getPlaneGeometry(
       this.lnglat,
       this.lnglat1,
       this.widthSegments,
@@ -100,7 +104,11 @@ class PlaneGeometry {
       attributes: new Cesium.GeometryAttributes(),
       indices: new Uint16Array(indices),
       primitiveType: Cesium.PrimitiveType.TRIANGLES,
-      boundingSphere: Cesium.BoundingSphere.fromVertices(positions, new Cesium.Cartesian3(0, 0, 0), 3)
+      boundingSphere: Cesium.BoundingSphere.fromVertices(
+        positions,
+        new Cesium.Cartesian3(0, 0, 0),
+        3
+      )
     });
 
     geometry.attributes.position = new Cesium.GeometryAttribute({
@@ -149,12 +157,23 @@ class MyCesiumMap extends CesiumMap {
     // const {vertices, uvs, indices} = this.getPlaneGeometry([114, 22], [116, 23]);
 
     // console.log("🚀 ~ index.ts ~ MyCesiumMap ~ init ~ vertices, uvs, indices:", vertices, uvs, indices);
+    //https://sandcastle.cesium.com/?src=Materials.html&label=All
+    const material = new Cesium.Material({
+      fabric: {
+        uniforms: {
+          image
+        },
 
-    const geometry = new PlaneGeometry([115, 23.5], [116, 24]).createGeometry();
+        source: materialGlsl
+      }
+    });
+
+    const geometry = new PlaneGeometry([114, 22.5], [115, 23]).createGeometry();
     const appearance = new Cesium.MaterialAppearance({
-      material: Cesium.Material.fromType("Image", {
-        image: image
-      })
+      // material: Cesium.Material.fromType("Image", {
+      //   image: image
+      // })
+      material
     });
     this.viewer.scene.primitives.add(
       new Cesium.Primitive({
@@ -168,5 +187,5 @@ class MyCesiumMap extends CesiumMap {
   }
 }
 
-const cesiumMap = new MyCesiumMap("cesiumContainer");
+const cesiumMap = new MyCesiumMap('cesiumContainer');
 window.cesiumMap = cesiumMap;
