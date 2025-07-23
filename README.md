@@ -8,11 +8,11 @@
 
 - [源码地址:draw](src/draw/index.ts)
 
-## 自定义Primitive
+## 自定义 Primitive
 
 - [源码地址:customPrimitive](src/customPrimitive/index.ts)
 
-## 自定义Primitive绘制折线和多边形
+## 自定义 Primitive 绘制折线和多边形
 
 - [源码地址:drawPrimitive](src/drawPrimitive/index.ts)
 
@@ -56,18 +56,30 @@
 
 - [源码地址:selectOutline](src/selectOutline/index.ts)
 
-## 聚类
-
-- [源码地址:cluster](src/cluster/index.ts)
-
-## 2D3D切换
+## 2D3D 切换
 
 - [源码地址:2D3D](src/2D3D/index.ts)
 
-## HTML信息框
+## HTML 信息框
 
 - [源码地址:htmlOverlay](src/htmlOverlay/index.ts)
 
 ## three+cesium
 
 - [源码地址:three](src/three/index.ts)
+
+## Geojosn 行政区块
+
+- [源码地址:geo](src/geo/index.ts)
+
+## 升起柱体行政区块
+
+- [源码地址:bars](src/bars/index.ts)
+
+## 点聚类
+
+- [源码地址:cluster](src/cluster/index.ts)
+
+## 热力平面/山丘
+
+- [源码地址:heatmap](src/heatmap/index.ts)

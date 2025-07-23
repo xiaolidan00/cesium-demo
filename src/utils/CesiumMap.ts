@@ -92,7 +92,7 @@ export class CesiumMap {
     //监听底图加载完毕
 
     viewer.scene.globe.tileLoadProgressEvent.addEventListener((ev) => {
-      if (ev <= 10 && this.isFirst) {
+      if (ev <= 3 && this.isFirst) {
         console.log("底图加载完毕");
         this.isFirst = false;
         setTimeout(() => {

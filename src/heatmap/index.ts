@@ -1,14 +1,14 @@
-import * as Cesium from 'cesium';
-import mockdata from './mockdata.json';
-import { CesiumMap } from '../utils/CesiumMap';
-import { createGui } from '../utils/tool';
-import { PosUtil } from '../utils/PosUtil';
-import vertexGlsl from './custom-vertex.glsl';
-import materialGlsl from './material.glsl';
+import * as Cesium from "cesium";
+import mockdata from "../data/mockdata.json";
+import {CesiumMap} from "../utils/CesiumMap";
 
-import { SphericalMercator } from './SphericalMercator';
+import {PosUtil} from "../utils/PosUtil";
+import vertexGlsl from "./vertex.glsl";
+import materialGlsl from "./material.glsl";
 
-import { createHeatmap } from './heatmap';
+import {SphericalMercator} from "./SphericalMercator";
+
+import {createHeatmap} from "./heatmap";
 function getHeatmap() {
   const zoom = 11;
 
@@ -62,24 +62,24 @@ function getHeatmap() {
     width: info.sizelng,
     height: info.sizelat,
     colors: {
-      0.1: '#2A85B8',
-      0.2: '#16B0A9',
-      0.3: '#29CF6F',
-      0.4: '#5CE182',
-      0.5: '#7DF675',
-      0.6: '#FFF100',
-      0.7: '#FAA53F',
-      1: '#D04343'
+      0.1: "#2A85B8",
+      0.2: "#16B0A9",
+      0.3: "#29CF6F",
+      0.4: "#5CE182",
+      0.5: "#7DF675",
+      0.6: "#FFF100",
+      0.7: "#FAA53F",
+      1: "#D04343"
     },
     radius,
     ...info
     // x, y 表示二维坐标； value表示强弱值
   });
-  return { info, heatmapCanvas };
+  return {info, heatmapCanvas};
 }
 class MyCesiumMap extends CesiumMap {
   dataObj = {
-    actions: '无'
+    actions: "无"
   };
   areaCollection = [] as string[];
   barCollection = [] as string[];
@@ -89,11 +89,12 @@ class MyCesiumMap extends CesiumMap {
   time = 0;
   isBar = false;
   info: any;
-  heatmapCanvas?: HTMLCanvasElement;
+  height = 82701.91469466327;
+  heatmapCanvasData?: string;
   constructor(containerId: string) {
     super(containerId);
-    const height = 82701.91469466327;
-    this.zoom = PosUtil.heightToLevel(height);
+
+    this.zoom = PosUtil.heightToLevel(this.height);
     this.setView(
       {
         lng: 114.09596765019016,
@@ -114,104 +115,22 @@ class MyCesiumMap extends CesiumMap {
       }
     }
   }
-
+  loadImage(heatmapCanvas: HTMLCanvasElement) {
+    return new Promise<HTMLImageElement>((resolve) => {
+      const img = new Image();
+      img.src = heatmapCanvas.toDataURL();
+      img.onload = () => {
+        resolve(img);
+      };
+    });
+  }
   async init() {
-    const { heatmapCanvas, info } = getHeatmap();
-    this.heatmapCanvas = heatmapCanvas;
+    const {heatmapCanvas, info} = getHeatmap();
+    this.heatmapCanvasData = heatmapCanvas.toDataURL();
     this.info = info;
     this.viewer.scene.preRender.addEventListener(this.preRender.bind(this));
-    // const terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl("https://data.marsgis.cn/terrain");
-    // this.viewer.terrainProvider = terrainProvider;
-
-    createGui(
-      [
-        { type: 'title', title: '泵房分布' },
-        {
-          name: 'actions',
-          type: 'select',
-          options: ['无', '柱体', '热力', '聚类', '行政区'],
-          onChange: (value) => {
-            if (value === '柱体') {
-              this.addPolyline();
-            } else if (value === '行政区') {
-              this.addPolygon();
-            } else if (value === '热力') {
-              this.addHeatmap();
-            } else if (value === '聚类') {
-              this.addCluster();
-            } else {
-              this.isBar = false;
-              this.viewer.dataSources.removeAll();
-              this.viewer.entities.removeById('heatmap');
-              this.areaCollection.forEach((id) => {
-                this.viewer.entities.removeById(id);
-              });
-              this.areaCollection = [];
-              this.barCollection.forEach((id) => {
-                this.viewer.entities.removeById(id);
-              });
-              this.barCollection = [];
-              if (this.heat) {
-                this.viewer.scene.primitives.remove(this.heat);
-                this.heat = undefined;
-              }
-            }
-          }
-        }
-      ],
-      this.dataObj
-    );
-  }
-  addCluster() {
-    const dataSource = new Cesium.CustomDataSource('cluster');
-    mockdata.forEach((item, idx) => {
-      const { lat, lng } = item;
-
-      dataSource.entities.add({
-        position: Cesium.Cartesian3.fromDegrees(lng, lat, 0),
-        billboard: {
-          image: './Locations.svg',
-          scale: 0.5,
-          //取消深度测试
-          disableDepthTestDistance: Number.POSITIVE_INFINITY
-        }
-      });
-    });
-    dataSource.clustering.enabled = true;
-    dataSource.clustering.pixelRange = 100;
-    dataSource.clustering.minimumClusterSize = 2;
-
-    const size = 60;
-    const halfSize = size * 0.5;
-    const canvas = document.createElement('canvas');
-    canvas.width = size;
-    canvas.height = size;
-    const ctx = canvas.getContext('2d')!;
-    this.removeListener = dataSource.clustering.clusterEvent.addEventListener(function (
-      clusteredEntities,
-      cluster
-    ) {
-      cluster.label.show = false;
-      cluster.billboard.show = true;
-      cluster.billboard.id = cluster.label.id;
-      cluster.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY;
-      cluster.billboard.verticalOrigin = Cesium.VerticalOrigin.CENTER;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.arc(halfSize, halfSize, halfSize, 0, Math.PI * 2);
-      ctx.fillStyle = '#1E90FF';
-      ctx.fill();
-      const text = clusteredEntities.length + '';
-      ctx.font = `16px serif`;
-      ctx.fillStyle = 'white';
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'middle';
-      const t = ctx.measureText(text).width;
-      ctx.fillText(text, halfSize - t * 0.5, halfSize);
-      cluster.billboard.image = canvas.toDataURL();
-    });
-
-    this.viewer.dataSources.add(dataSource);
+    // this.addHeatmap();
+    this.addHeatmapTerrain();
   }
   getPlaneGeometry(
     lnglat: [number, number],
@@ -220,75 +139,54 @@ class MyCesiumMap extends CesiumMap {
     heightSegments: number = 100,
     height3D: number = 0
   ) {
-    const width: number = 1;
-    const height: number = 1;
-
     const minlng = Math.min(lnglat[0], lnglat1[0]);
     const minlat = Math.min(lnglat[1], lnglat1[1]);
     const maxlng = Math.max(lnglat[0], lnglat1[0]);
     const maxlat = Math.max(lnglat[1], lnglat1[1]);
     const sizelng = maxlng - minlng;
     const sizelat = maxlat - minlat;
-    const width_half = width / 2;
-    const height_half = height / 2;
 
     const gridX = Math.floor(widthSegments);
     const gridY = Math.floor(heightSegments);
 
+    const unitx = sizelng / gridX;
+    const unity = sizelat / gridY;
     const gridX1 = gridX + 1;
-    const gridY1 = gridY + 1;
-
-    const segment_width = width / gridX;
-    const segment_height = height / gridY;
-
-    //
 
     const indices: number[] = [];
+
     const vertices: number[] = [];
     const normals = [];
     const uvs: number[] = [];
 
-    for (let iy = 0; iy < gridY1; iy++) {
-      const y = iy * segment_height - height_half;
-
-      for (let ix = 0; ix < gridX1; ix++) {
-        const x = ix * segment_width - width_half;
-
-        const pos = Cesium.Cartesian3.fromDegrees(
-          x * sizelng + minlng,
-          -y * sizelat + minlat,
-          height3D
-        );
+    for (let iy = 0; iy <= gridY; iy++) {
+      for (let ix = 0; ix <= gridX; ix++) {
+        const pos = Cesium.Cartesian3.fromDegrees(ix * unitx + minlng, iy * unity + minlat, height3D);
         vertices.push(pos.x, pos.y, pos.z);
 
         normals.push(0, 0, 1);
 
         uvs.push(ix / gridX);
-        uvs.push(1 - iy / gridY);
+        uvs.push(iy / gridY);
+
+        if (iy < gridX1) {
+          const a = ix + gridX1 * iy;
+          const b = a + 1;
+          const c = ix + gridX1 * (iy + 1);
+          const d = c + 1;
+          indices.push(a, c, b);
+          indices.push(c, d, b);
+        }
       }
     }
-
-    for (let iy = 0; iy < gridY; iy++) {
-      for (let ix = 0; ix < gridX; ix++) {
-        const a = ix + gridX1 * iy;
-        const b = ix + gridX1 * (iy + 1);
-        const c = ix + 1 + gridX1 * (iy + 1);
-        const d = ix + 1 + gridX1 * iy;
-
-        indices.push(a, b, d);
-        indices.push(b, c, d);
-      }
-    }
+    // console.log(vertices, uvs, indices);
     const positions = new Float64Array(vertices);
     const geometry = new Cesium.Geometry({
       attributes: new Cesium.GeometryAttributes(),
       indices: new Uint16Array(indices),
+
       primitiveType: Cesium.PrimitiveType.TRIANGLES,
-      boundingSphere: Cesium.BoundingSphere.fromVertices(
-        positions,
-        new Cesium.Cartesian3(0, 0, 0),
-        3
-      )
+      boundingSphere: Cesium.BoundingSphere.fromVertices(vertices, new Cesium.Cartesian3(0, 0, 0), 3)
     });
 
     geometry.attributes.position = new Cesium.GeometryAttribute({
@@ -304,40 +202,52 @@ class MyCesiumMap extends CesiumMap {
 
     return geometry;
   }
-  addHeatmap() {
-    const material = new Cesium.Material({
-      fabric: {
-        uniforms: {
-          image: this.heatmapCanvas!.toDataURL()
-        },
 
-        source: materialGlsl
-      }
+  addHeatmapTerrain() {
+    const material = Cesium.Material.fromType("Image", {
+      image: this.heatmapCanvasData
     });
-    const appearance = new Cesium.EllipsoidSurfaceAppearance({
-      // material: Cesium.Material.fromType("Image", {
-      //   image: this.heatmapCanvas!.toDataURL()
-      // })
-      material
+
+    material.shaderSource = materialGlsl;
+
+    const appearance = new Cesium.MaterialAppearance({
+      material,
+      vertexShaderSource: vertexGlsl
     });
+
+    console.log(appearance.vertexShaderSource);
+
     const heat = new Cesium.Primitive({
       geometryInstances: new Cesium.GeometryInstance({
-        // geometry:
-        //  new Cesium.RectangleGeometry({
-        //   rectangle: Cesium.Rectangle.fromDegrees(
-        //     this.info.minlng,
-        //     this.info.minlat,
-        //     this.info.maxlng,
-        //     this.info.maxlat
-        //   )
-        // })
         geometry: this.getPlaneGeometry(
           [this.info.minlng, this.info.minlat],
           [this.info.maxlng, this.info.maxlat],
-          500,
-          500,
+          400,
+          200,
           100
         )
+      }),
+      appearance,
+      asynchronous: false
+    });
+    this.viewer.scene.primitives.add(heat);
+  }
+  addHeatmap() {
+    const appearance = new Cesium.EllipsoidSurfaceAppearance({
+      material: Cesium.Material.fromType("Image", {
+        image: this.heatmapCanvasData
+      })
+    });
+    const heat = new Cesium.GroundPrimitive({
+      geometryInstances: new Cesium.GeometryInstance({
+        geometry: new Cesium.RectangleGeometry({
+          rectangle: Cesium.Rectangle.fromDegrees(
+            this.info.minlng,
+            this.info.minlat,
+            this.info.maxlng,
+            this.info.maxlat
+          )
+        })
       }),
       appearance,
       asynchronous: false
@@ -345,60 +255,7 @@ class MyCesiumMap extends CesiumMap {
     this.heat = heat;
     this.viewer.scene.primitives.add(heat);
   }
-
-  addPolygon() {
-    Cesium.GeoJsonDataSource.load(
-      'https://geo.datav.aliyun.com/areas_v3/bound/440300_full.json'
-    ).then((dataSource) => {
-      this.viewer.dataSources.add(dataSource);
-      const entities = dataSource.entities.values;
-
-      for (let i = 0; i < entities.length; i++) {
-        const entity = entities[i];
-        entity.polygon.material = Cesium.Color.LIGHTSEAGREEN.withAlpha(
-          0.3 + (i / entities.length) * 0.5
-        );
-        entity.polygon.outline = true;
-        entity.polygon.outlineWidth = 10;
-        entity.polygon.outlineColor = Cesium.Color.WHITE;
-        entity.polygon.height = 100;
-      }
-    });
-  }
-  addPolyline() {
-    const heightScale = PosUtil.levelToHeight(Math.floor(this.zoom * 1.3));
-    mockdata.forEach((item, i) => {
-      const { lat, lng, value } = item;
-      const height = (value - this.info.min) / this.info.size;
-
-      const color = Cesium.Color.fromHsl(height * 0.5 + 0.2, 1.0, 0.5);
-      const surfacePosition = Cesium.Cartesian3.fromDegrees(Number(lng), Number(lat), 0);
-
-      //WebGL Globe only contains lines, so that's the only graphics we create.
-      const polyline = new Cesium.PolylineGraphics();
-      polyline.material = new Cesium.ColorMaterialProperty(color);
-      polyline.width = new Cesium.ConstantProperty(2);
-      polyline.arcType = new Cesium.ConstantProperty(Cesium.ArcType.NONE);
-      polyline.positions = new Cesium.CallbackProperty(() => {
-        const heightPosition = Cesium.Cartesian3.fromDegrees(
-          Number(lng),
-          Number(lat),
-          this.time * height * heightScale
-        );
-        return [surfacePosition, heightPosition];
-      }, false);
-
-      //The polyline instance itself needs to be on an entity.
-      const entity = new Cesium.Entity({
-        id: i + 'line',
-        polyline: polyline
-      });
-      this.viewer.entities.add(entity);
-      this.barCollection.push(entity.id);
-    });
-    this.isBar = true;
-  }
 }
 
-const cesiumMap = new MyCesiumMap('cesiumContainer');
+const cesiumMap = new MyCesiumMap("cesiumContainer");
 window.cesiumMap = cesiumMap;

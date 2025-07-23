@@ -1,98 +1,73 @@
-import * as Cesium from 'cesium';
-
-import { CesiumMap } from '../utils/CesiumMap';
-
+import * as Cesium from "cesium";
+import mockdata from "../data/mockdata.json";
+import {CesiumMap} from "../utils/CesiumMap";
+import locationImage from "../assets/Locations.svg";
 class MyCesiumMap extends CesiumMap {
-  dataObj = {
-    actions: '无'
-  };
-
+  removeListener: any;
   constructor(containerId: string) {
     super(containerId);
+    this.setView(
+      {
+        lng: 114.09596765019016,
+        lat: 22.094395841725976,
+        height: 82701.91469466327
+      },
+      {
+        heading: 0,
+        pitch: -53,
+        roll: 0
+      }
+    );
   }
   init() {
-    const dataSourcePromise = this.viewer.dataSources.add(
-      Cesium.KmlDataSource.load('facilities.kml', {
-        camera: this.viewer.scene.camera,
-        canvas: this.viewer.scene.canvas
-      })
-    );
-    dataSourcePromise.then((dataSource) => {
-      const pixelRange = 15;
-      const minimumClusterSize = 3;
-      const enabled = true;
+    const dataSource = new Cesium.CustomDataSource("cluster");
+    mockdata.forEach((item, idx) => {
+      const {lat, lng} = item;
 
-      dataSource.clustering.enabled = enabled;
-      dataSource.clustering.pixelRange = pixelRange;
-      dataSource.clustering.minimumClusterSize = minimumClusterSize;
-
-      let removeListener: Cesium.Event.RemoveCallback | undefined;
-
-      const pinBuilder = new Cesium.PinBuilder();
-      const pin50 = pinBuilder.fromText('50+', Cesium.Color.RED, 48).toDataURL();
-      const pin40 = pinBuilder.fromText('40+', Cesium.Color.ORANGE, 48).toDataURL();
-      const pin30 = pinBuilder.fromText('30+', Cesium.Color.YELLOW, 48).toDataURL();
-      const pin20 = pinBuilder.fromText('20+', Cesium.Color.GREEN, 48).toDataURL();
-      const pin10 = pinBuilder.fromText('10+', Cesium.Color.BLUE, 48).toDataURL();
-
-      const singleDigitPins = new Array(8);
-      for (let i = 0; i < singleDigitPins.length; ++i) {
-        singleDigitPins[i] = pinBuilder.fromText(`${i + 2}`, Cesium.Color.VIOLET, 48).toDataURL();
-      }
-
-      const customStyle = () => {
-        if (Cesium.defined(removeListener)) {
-          removeListener();
-          removeListener = undefined;
-        } else {
-          removeListener = dataSource.clustering.clusterEvent.addEventListener(
-            (clusteredEntities, cluster) => {
-              cluster.label.show = false;
-              cluster.billboard.show = true;
-              cluster.billboard.id = cluster.label.id;
-              cluster.billboard.verticalOrigin = Cesium.VerticalOrigin.BOTTOM;
-              cluster.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY;
-              if (clusteredEntities.length >= 50) {
-                cluster.billboard.image = pin50;
-              } else if (clusteredEntities.length >= 40) {
-                cluster.billboard.image = pin40;
-              } else if (clusteredEntities.length >= 30) {
-                cluster.billboard.image = pin30;
-              } else if (clusteredEntities.length >= 20) {
-                cluster.billboard.image = pin20;
-              } else if (clusteredEntities.length >= 10) {
-                cluster.billboard.image = pin10;
-              } else {
-                cluster.billboard.image = singleDigitPins[clusteredEntities.length - 2];
-              }
-            }
-          );
+      dataSource.entities.add({
+        position: Cesium.Cartesian3.fromDegrees(lng, lat, 0),
+        billboard: {
+          image: locationImage,
+          scale: 0.5,
+          //取消深度测试
+          disableDepthTestDistance: Number.POSITIVE_INFINITY
         }
-
-        // force a re-cluster with the new styling
-        const pixelRange = dataSource.clustering.pixelRange;
-        dataSource.clustering.pixelRange = 0;
-        dataSource.clustering.pixelRange = pixelRange;
-      };
-
-      // start with custom style
-      customStyle();
-
-      const handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-      handler.setInputAction((ev: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
-        const pickedLabel = this.viewer.scene.pick(ev.position);
-        if (Cesium.defined(pickedLabel)) {
-          const ids = pickedLabel.id;
-          if (Array.isArray(ids)) {
-            for (let i = 0; i < ids.length; ++i) {
-              ids[i].billboard.color = Cesium.Color.RED;
-            }
-          }
-        }
-      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      });
     });
+    dataSource.clustering.enabled = true;
+    dataSource.clustering.pixelRange = 100;
+    dataSource.clustering.minimumClusterSize = 2;
+
+    const size = 60;
+    const halfSize = size * 0.5;
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d")!;
+    this.removeListener = dataSource.clustering.clusterEvent.addEventListener(function (clusteredEntities, cluster) {
+      cluster.label.show = false;
+      cluster.billboard.show = true;
+      cluster.billboard.id = cluster.label.id;
+      cluster.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY;
+      cluster.billboard.verticalOrigin = Cesium.VerticalOrigin.CENTER;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.arc(halfSize, halfSize, halfSize, 0, Math.PI * 2);
+      ctx.fillStyle = "#1E90FF";
+      ctx.fill();
+      const text = clusteredEntities.length + "";
+      ctx.font = `16px serif`;
+      ctx.fillStyle = "white";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      const t = ctx.measureText(text).width;
+      ctx.fillText(text, halfSize - t * 0.5, halfSize);
+      cluster.billboard.image = canvas.toDataURL();
+    });
+
+    this.viewer.dataSources.add(dataSource);
   }
 }
 
-const cesiumMap = new MyCesiumMap('cesiumContainer');
+const cesiumMap = new MyCesiumMap("cesiumContainer");
 window.cesiumMap = cesiumMap;
